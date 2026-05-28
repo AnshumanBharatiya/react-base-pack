@@ -5,10 +5,13 @@ import inquirer from 'inquirer';
 import {
   ANSWER_KEYS,
   CLI_MESSAGES,
-  FEATURE_CHOICES,
+  FEATURE_PROMPT_CHOICES,
+  FEATURES,
   PROJECT_TYPE_LABELS,
-  PROMPTS
+  PROMPTS,
+  SETUP_FEATURES
 } from '../constants/index.js';
+import { runSetup } from './setup.js';
 import { detectProjectType } from '../utils/detector.js';
 import { logger } from '../utils/logger.js';
 import { showInstallerSpinner } from '../utils/installer.js';
@@ -46,7 +49,21 @@ export async function init() {
         type: 'checkbox',
         name: ANSWER_KEYS.FEATURES,
         message: PROMPTS.FEATURES,
-        choices: FEATURE_CHOICES
+        choices: FEATURE_PROMPT_CHOICES,
+        validate: (selectedFeatures) => {
+          if (selectedFeatures.length > 0) {
+            return true;
+          }
+
+          return CLI_MESSAGES.FEATURE_SELECTION_REQUIRED;
+        },
+        filter: (selectedFeatures) => {
+          if (selectedFeatures.includes(FEATURES.ALL)) {
+            return SETUP_FEATURES;
+          }
+
+          return selectedFeatures;
+        }
       }
     ]);
 
@@ -56,7 +73,8 @@ export async function init() {
       features: answers[ANSWER_KEYS.FEATURES]
     };
 
-    logger.success(CLI_MESSAGES.FOUNDATION_READY);
+    await runSetup(phaseAnswers, projectType);
+    logger.success(CLI_MESSAGES.SETUP_COMPLETE);
     return phaseAnswers;
   } catch (error) {
     spinner.fail(CLI_MESSAGES.UNEXPECTED_ERROR);

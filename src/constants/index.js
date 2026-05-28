@@ -33,6 +33,12 @@ export const CLI_MESSAGES = {
   PROJECT_NOT_FOUND: 'No supported React project detected. Run this inside a Vite, CRA, or Next.js project.',
   PROJECT_DETECTED: 'Detected React project type:',
   FOUNDATION_READY: 'Foundation ready. Run phase setup next.',
+  CREATING_FOLDER_ARCHITECTURE: 'Creating folder architecture...',
+  FOLDER_ARCHITECTURE_READY: 'Folder architecture created successfully.',
+  FEATURE_COMING_SOON: 'Coming soon:',
+  FOLDER_ALREADY_EXISTS: 'Folder already exists, skipping:',
+  SETUP_COMPLETE: 'Foundation ready.',
+  FEATURE_SELECTION_REQUIRED: 'Select at least one feature. Use Space to select, then Enter to continue.',
   INSTALLING_DEPENDENCIES: 'Installing dependencies...',
   NO_PACKAGES_PROVIDED: 'No packages provided for installation.',
   INSTALL_FAILED: 'Dependency installation failed.'
@@ -54,13 +60,133 @@ export const PROMPTS = {
   FEATURES: 'Which features do you want to set up?'
 };
 
-export const FEATURE_CHOICES = [
-  'Folder Architecture',
-  'Redux Toolkit',
-  'JWT Auth',
-  'Axios Setup',
-  'React Router'
+export const FEATURES = {
+  ALL: 'All Features',
+  FOLDER_ARCHITECTURE: 'Folder Architecture',
+  REDUX_TOOLKIT: 'Redux Toolkit',
+  JWT_AUTH: 'JWT Auth',
+  AXIOS_SETUP: 'Axios Setup',
+  REACT_ROUTER: 'React Router'
+};
+
+export const FEATURE_CHOICES = Object.values(FEATURES);
+
+export const FEATURE_PROMPT_CHOICES = [
+  {
+    name: FEATURES.ALL,
+    value: FEATURES.ALL
+  },
+  {
+    name: FEATURES.FOLDER_ARCHITECTURE,
+    value: FEATURES.FOLDER_ARCHITECTURE,
+    checked: true
+  },
+  {
+    name: FEATURES.REDUX_TOOLKIT,
+    value: FEATURES.REDUX_TOOLKIT
+  },
+  {
+    name: FEATURES.JWT_AUTH,
+    value: FEATURES.JWT_AUTH
+  },
+  {
+    name: FEATURES.AXIOS_SETUP,
+    value: FEATURES.AXIOS_SETUP
+  },
+  {
+    name: FEATURES.REACT_ROUTER,
+    value: FEATURES.REACT_ROUTER
+  }
 ];
+
+export const SETUP_FEATURES = [
+  FEATURES.FOLDER_ARCHITECTURE,
+  FEATURES.REDUX_TOOLKIT,
+  FEATURES.JWT_AUTH,
+  FEATURES.AXIOS_SETUP,
+  FEATURES.REACT_ROUTER
+];
+
+export const SOURCE_DIRECTORY = 'src';
+
+export const README_FILE = 'README.md';
+
+export const GITKEEP_FILE = '.gitkeep';
+
+export const FOLDER_STRUCTURE = [
+  {
+    name: 'components',
+    description: 'reusable UI components',
+    readme: '# components\nPlace all reusable UI components here.\nOrganize by feature: components/Button, components/Modal etc.\n'
+  },
+  {
+    name: 'pages',
+    description: 'route-level page components',
+    readme: '# pages\nPlace route-level page components here.\nKeep each page focused on composing features and layouts.\n'
+  },
+  {
+    name: 'hooks',
+    description: 'custom React hooks',
+    readme: '# hooks\nPlace custom React hooks here.\nUse this folder for reusable stateful logic shared across components.\n'
+  },
+  {
+    name: 'context',
+    description: 'React context providers',
+    readme: '# context\nPlace React context providers here.\nKeep provider setup and context-specific hooks close together.\n'
+  },
+  {
+    name: 'services',
+    description: 'API calls and business logic',
+    readme: '# services\nPlace API calls and business logic here.\nKeep external integrations and domain operations out of UI components.\n'
+  },
+  {
+    name: 'utils',
+    description: 'helper functions',
+    readme: '# utils\nPlace helper functions here.\nKeep utilities small, focused, and independent of React rendering.\n'
+  },
+  {
+    name: 'assets',
+    description: 'images, fonts, icons',
+    readme: '# assets\nPlace images, fonts, icons, and other static assets here.\nGroup assets by type or feature as the project grows.\n'
+  },
+  {
+    name: 'layouts',
+    description: 'layout wrappers',
+    readme: '# layouts\nPlace layout wrappers here.\nUse this folder for shared shells such as Header, Sidebar, and page frames.\n'
+  },
+  {
+    name: 'config',
+    description: 'env config and app config',
+    readme: '# config\nPlace env config and app config here.\nCentralize runtime settings and app-level configuration helpers.\n'
+  },
+  {
+    name: 'constants',
+    description: 'app-wide constants',
+    readme: '# constants\nPlace app-wide constants here.\nKeep shared labels, route names, and fixed values easy to find.\n'
+  }
+];
+
+export const FOLDER_TREE = `src/
+|-- components/
+|   |-- README.md
+|-- pages/
+|   |-- README.md
+|-- hooks/
+|   |-- README.md
+|-- context/
+|   |-- README.md
+|-- services/
+|   |-- README.md
+|-- utils/
+|   |-- README.md
+|-- assets/
+|   |-- README.md
+|-- layouts/
+|   |-- README.md
+|-- config/
+|   |-- README.md
+|-- constants/
+|   |-- README.md`;
 
 export const PACKAGE_MANIFEST = 'package.json';
 

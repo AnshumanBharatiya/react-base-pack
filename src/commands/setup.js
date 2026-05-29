@@ -3,6 +3,7 @@
 import path from 'node:path';
 import { ANSWER_KEYS, CLI_MESSAGES, FEATURES, SOURCE_DIRECTORY } from '../constants/index.js';
 import { generateFolderStructure } from '../generators/folderGenerator.js';
+import { generateReduxSetup } from '../generators/reduxGenerator.js';
 import { showInstallerSpinner } from '../utils/installer.js';
 import { logger } from '../utils/logger.js';
 
@@ -22,8 +23,13 @@ export async function runSetup(answers, projectType) {
       await generateFolderStructure(targetPath);
     }
 
+    if (selectedFeatures.includes(FEATURES.REDUX_TOOLKIT)) {
+      const targetPath = path.join(process.cwd(), SOURCE_DIRECTORY);
+      await generateReduxSetup(targetPath);
+    }
+
     selectedFeatures
-      .filter((feature) => feature !== FEATURES.FOLDER_ARCHITECTURE)
+      .filter((feature) => ![FEATURES.FOLDER_ARCHITECTURE, FEATURES.REDUX_TOOLKIT].includes(feature))
       .forEach((feature) => {
         const spinner = showInstallerSpinner(`${CLI_MESSAGES.FEATURE_COMING_SOON} ${feature}`);
 

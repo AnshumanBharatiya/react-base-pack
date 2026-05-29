@@ -1,0 +1,21 @@
+import { configureStore } from '@reduxjs/toolkit';
+import exampleReducer from './slices/exampleSlice';
+
+export const store = configureStore({
+  reducer: {
+    example: exampleReducer,
+  },
+});
+
+/**
+ * RootState shape:
+ * import store from './store';
+ * const state = store.getState();
+ */
+
+/**
+ * AppDispatch shape:
+ * import store from './store';
+ * const dispatch = store.dispatch;
+ */
+export default store;

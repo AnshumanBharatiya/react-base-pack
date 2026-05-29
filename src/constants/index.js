@@ -40,8 +40,12 @@ export const CLI_MESSAGES = {
   SETUP_COMPLETE: 'Foundation ready.',
   FEATURE_SELECTION_REQUIRED: 'Select at least one feature. Use Space to select, then Enter to continue.',
   INSTALLING_DEPENDENCIES: 'Installing dependencies...',
+  DEPENDENCIES_INSTALLED: 'Dependencies installed.',
   NO_PACKAGES_PROVIDED: 'No packages provided for installation.',
-  INSTALL_FAILED: 'Dependency installation failed.'
+  INSTALL_FAILED: 'Dependency installation failed.',
+  SETTING_UP_REDUX: 'Setting up Redux Toolkit...',
+  REDUX_SETUP_COMPLETE: 'Redux Toolkit setup complete!',
+  STORE_ALREADY_EXISTS: 'Redux store already exists, skipping Redux Toolkit setup:'
 };
 
 export const PROJECT_TYPE_LABELS = {
@@ -112,6 +116,8 @@ export const SOURCE_DIRECTORY = 'src';
 export const README_FILE = 'README.md';
 
 export const GITKEEP_FILE = '.gitkeep';
+
+export const TEMPLATE_EXTENSION = '.template';
 
 export const FOLDER_STRUCTURE = [
   {
@@ -202,3 +208,78 @@ export const NPM_COMMANDS = {
   INSTALL: 'install',
   SAVE_DEV: '--save-dev'
 };
+
+export const PLATFORM = {
+  WINDOWS: 'win32'
+};
+
+export const PACKAGE_MANAGERS = {
+  NPM: 'npm',
+  YARN: 'yarn',
+  PNPM: 'pnpm'
+};
+
+export const LOCK_FILES = {
+  [PACKAGE_MANAGERS.PNPM]: 'pnpm-lock.yaml',
+  [PACKAGE_MANAGERS.YARN]: 'yarn.lock',
+  [PACKAGE_MANAGERS.NPM]: 'package-lock.json'
+};
+
+export const PACKAGE_MANAGER_INSTALL_CONFIG = {
+  [PACKAGE_MANAGERS.NPM]: {
+    command: 'npm',
+    windowsCommand: 'npm.cmd',
+    installArgs: ['install'],
+    devArg: '--save-dev'
+  },
+  [PACKAGE_MANAGERS.YARN]: {
+    command: 'yarn',
+    windowsCommand: 'yarn.cmd',
+    installArgs: ['add'],
+    devArg: '-D'
+  },
+  [PACKAGE_MANAGERS.PNPM]: {
+    command: 'pnpm',
+    windowsCommand: 'pnpm.cmd',
+    installArgs: ['add'],
+    devArg: '-D'
+  }
+};
+
+export const REDUX_PACKAGES = ['@reduxjs/toolkit@latest', 'react-redux@latest'];
+
+export const REDUX_TEMPLATE_DIRECTORY = 'redux';
+
+export const REDUX_DIRECTORIES = {
+  STORE: 'store',
+  HOOKS: 'hooks',
+  SLICES: 'slices'
+};
+
+export const REDUX_TEMPLATE_FILES = {
+  STORE: 'store.js.template',
+  HOOKS: 'reduxHooks.js.template',
+  SLICE: 'exampleSlice.js.template'
+};
+
+export const REDUX_OUTPUT_FILES = {
+  STORE: 'store.js',
+  HOOKS: 'reduxHooks.js',
+  SLICE: 'exampleSlice.js'
+};
+
+export const REDUX_NEXT_STEPS = `Redux Toolkit setup complete!
+
+Next steps:
+1. Wrap your app in main.jsx:
+   import { Provider } from 'react-redux';
+   import { store } from './store/store';
+
+   <Provider store={store}>
+     <App />
+   </Provider>
+
+2. Import hooks:
+   import { useAppDispatch, useAppSelector } from './store/hooks/reduxHooks';
+
+3. Use the example slice or create your own in src/store/slices/.`;

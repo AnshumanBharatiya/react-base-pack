@@ -1,8 +1,16 @@
 // Dependency installation helpers for future setup phases.
 
+import path from 'node:path';
 import ora from 'ora';
 import { execa } from 'execa';
-import { CLI_MESSAGES, NPM_COMMANDS } from '../constants/index.js';
+import {
+  CLI_MESSAGES,
+  LOCK_FILES,
+  PACKAGE_MANAGER_INSTALL_CONFIG,
+  PACKAGE_MANAGERS,
+  PLATFORM
+} from '../constants/index.js';
+import { pathExists } from './fileUtils.js';
 import { logger } from './logger.js';
 
 /**
@@ -21,7 +29,30 @@ export function showInstallerSpinner(label) {
 }
 
 /**
- * Installs npm dependencies in the current working directory.
+ * Detects the package manager used by the current project.
+ *
+ * @param {string} [targetPath=process.cwd()] Project root path.
+ * @returns {Promise<'npm'|'yarn'|'pnpm'>} Detected package manager.
+ */
+export async function detectPackageManager(targetPath = process.cwd()) {
+  try {
+    if (await pathExists(path.join(targetPath, LOCK_FILES[PACKAGE_MANAGERS.PNPM]))) {
+      return PACKAGE_MANAGERS.PNPM;
+    }
+
+    if (await pathExists(path.join(targetPath, LOCK_FILES[PACKAGE_MANAGERS.YARN]))) {
+      return PACKAGE_MANAGERS.YARN;
+    }
+
+    return PACKAGE_MANAGERS.NPM;
+  } catch (error) {
+    logger.error(error.message || CLI_MESSAGES.UNEXPECTED_ERROR);
+    return PACKAGE_MANAGERS.NPM;
+  }
+}
+
+/**
+ * Installs dependencies in the current working directory.
  *
  * @param {string[]} packages Package names to install.
  * @param {boolean} [isDev=false] Whether packages should be installed as dev dependencies.
@@ -37,18 +68,21 @@ export async function installDeps(packages, isDev = false) {
     }
 
     spinner.start();
-    const args = [NPM_COMMANDS.INSTALL, ...packages];
+    const packageManager = await detectPackageManager();
+    const installConfig = PACKAGE_MANAGER_INSTALL_CONFIG[packageManager];
+    const command = process.platform === PLATFORM.WINDOWS ? installConfig.windowsCommand : installConfig.command;
+    const args = [...installConfig.installArgs, ...packages];
 
     if (isDev) {
-      args.push(NPM_COMMANDS.SAVE_DEV);
+      args.push(installConfig.devArg);
     }
 
-    await execa('npm', args, {
+    await execa(command, args, {
       cwd: process.cwd(),
       stdio: 'ignore'
     });
 
-    spinner.succeed(CLI_MESSAGES.INSTALLING_DEPENDENCIES);
+    spinner.succeed(CLI_MESSAGES.DEPENDENCIES_INSTALLED);
   } catch (error) {
     spinner.fail(CLI_MESSAGES.INSTALL_FAILED);
     logger.error(error.message || CLI_MESSAGES.INSTALL_FAILED);

@@ -1,0 +1,15 @@
+// Central auth configuration for API URLs, token storage, and auth routes.
+
+const viteApiUrl = import.meta.env?.VITE_API_URL;
+const craApiUrl = typeof process !== 'undefined' ? process.env?.REACT_APP_API_URL : undefined;
+const nextApiUrl = typeof process !== 'undefined' ? process.env?.NEXT_PUBLIC_API_URL : undefined;
+
+export const authConfig = {
+  apiBaseUrl: viteApiUrl || craApiUrl || nextApiUrl || '',
+  tokenKey: 'auth_token',
+  loginPath: '/login',
+  registerPath: '/register',
+  mePath: '/me'
+};
+
+export default authConfig;

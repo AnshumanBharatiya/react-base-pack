@@ -45,7 +45,15 @@ export const CLI_MESSAGES = {
   INSTALL_FAILED: 'Dependency installation failed.',
   SETTING_UP_REDUX: 'Setting up Redux Toolkit...',
   REDUX_SETUP_COMPLETE: 'Redux Toolkit setup complete!',
-  STORE_ALREADY_EXISTS: 'Redux store already exists, skipping Redux Toolkit setup:'
+  STORE_ALREADY_EXISTS: 'Redux store already exists, skipping Redux Toolkit setup:',
+  SETTING_UP_JWT: 'Setting up JWT Auth architecture...',
+  JWT_SETUP_COMPLETE: 'JWT Auth architecture setup complete!',
+  JWT_FILE_EXISTS: 'Auth file already exists, skipping:',
+  AXIOS_NOT_FOUND: 'Axios is not installed.',
+  AXIOS_FOUND: 'Axios detected. Generating axios-based auth service.',
+  AXIOS_INSTALL_SELECTED: 'Installing axios and generating axios-based auth service.',
+  FETCH_AUTH_SELECTED: 'Generating fetch-based auth service without axios.',
+  JWT_FILE_CREATED: 'Created auth file:'
 };
 
 export const PROJECT_TYPE_LABELS = {
@@ -68,8 +76,8 @@ export const FEATURES = {
   ALL: 'All Features',
   FOLDER_ARCHITECTURE: 'Folder Architecture',
   REDUX_TOOLKIT: 'Redux Toolkit',
-  JWT_AUTH: 'JWT Auth',
   AXIOS_SETUP: 'Axios Setup',
+  JWT_AUTH: 'JWT Auth',
   REACT_ROUTER: 'React Router'
 };
 
@@ -90,12 +98,12 @@ export const FEATURE_PROMPT_CHOICES = [
     value: FEATURES.REDUX_TOOLKIT
   },
   {
-    name: FEATURES.JWT_AUTH,
-    value: FEATURES.JWT_AUTH
-  },
-  {
     name: FEATURES.AXIOS_SETUP,
     value: FEATURES.AXIOS_SETUP
+  },
+  {
+    name: FEATURES.JWT_AUTH,
+    value: FEATURES.JWT_AUTH
   },
   {
     name: FEATURES.REACT_ROUTER,
@@ -106,8 +114,8 @@ export const FEATURE_PROMPT_CHOICES = [
 export const SETUP_FEATURES = [
   FEATURES.FOLDER_ARCHITECTURE,
   FEATURES.REDUX_TOOLKIT,
-  FEATURES.JWT_AUTH,
   FEATURES.AXIOS_SETUP,
+  FEATURES.JWT_AUTH,
   FEATURES.REACT_ROUTER
 ];
 
@@ -201,7 +209,8 @@ export const PACKAGE_FIELDS = {
   DEV_DEPENDENCIES: 'devDependencies',
   VITE: 'vite',
   REACT_SCRIPTS: 'react-scripts',
-  NEXT: 'next'
+  NEXT: 'next',
+  AXIOS: 'axios'
 };
 
 export const NPM_COMMANDS = {
@@ -283,3 +292,111 @@ Next steps:
    import { useAppDispatch, useAppSelector } from './store/hooks/reduxHooks';
 
 3. Use the example slice or create your own in src/store/slices/.`;
+
+export const JWT_TEMPLATE_DIRECTORY = 'jwt';
+
+export const JWT_DIRECTORIES = {
+  SERVICES: 'services',
+  HOOKS: 'hooks',
+  CONTEXT: 'context',
+  UTILS: 'utils',
+  COMPONENTS: 'components',
+  CONFIG: 'config'
+};
+
+export const JWT_TEMPLATE_FILES = {
+  AUTH_SERVICE_AXIOS: 'authService.axios.js.template',
+  AUTH_SERVICE_FETCH: 'authService.fetch.js.template',
+  USE_AUTH: 'useAuth.js.template',
+  AUTH_CONTEXT: 'AuthContext.jsx.template',
+  TOKEN_UTILS: 'tokenUtils.js.template',
+  PROTECTED_ROUTE: 'ProtectedRoute.jsx.template',
+  AUTH_CONFIG: 'authConfig.js.template'
+};
+
+export const JWT_OUTPUT_FILES = {
+  AUTH_SERVICE: 'authService.js',
+  USE_AUTH: 'useAuth.js',
+  AUTH_CONTEXT: 'AuthContext.jsx',
+  TOKEN_UTILS: 'tokenUtils.js',
+  PROTECTED_ROUTE: 'ProtectedRoute.jsx',
+  AUTH_CONFIG: 'authConfig.js'
+};
+
+export const JWT_TEMPLATE_MAPPINGS = [
+  {
+    directory: JWT_DIRECTORIES.HOOKS,
+    template: JWT_TEMPLATE_FILES.USE_AUTH,
+    output: JWT_OUTPUT_FILES.USE_AUTH
+  },
+  {
+    directory: JWT_DIRECTORIES.CONTEXT,
+    template: JWT_TEMPLATE_FILES.AUTH_CONTEXT,
+    output: JWT_OUTPUT_FILES.AUTH_CONTEXT
+  },
+  {
+    directory: JWT_DIRECTORIES.UTILS,
+    template: JWT_TEMPLATE_FILES.TOKEN_UTILS,
+    output: JWT_OUTPUT_FILES.TOKEN_UTILS
+  },
+  {
+    directory: JWT_DIRECTORIES.COMPONENTS,
+    template: JWT_TEMPLATE_FILES.PROTECTED_ROUTE,
+    output: JWT_OUTPUT_FILES.PROTECTED_ROUTE
+  },
+  {
+    directory: JWT_DIRECTORIES.CONFIG,
+    template: JWT_TEMPLATE_FILES.AUTH_CONFIG,
+    output: JWT_OUTPUT_FILES.AUTH_CONFIG
+  }
+];
+
+export const AXIOS_PACKAGE = 'axios';
+
+export const AXIOS_LATEST_PACKAGE = 'axios@latest';
+
+export const JWT_AUTH_CLIENTS = {
+  AXIOS: 'axios',
+  FETCH: 'fetch'
+};
+
+export const JWT_AUTH_CLIENT_PROMPT = {
+  NAME: 'authClient',
+  MESSAGE: 'Axios is not installed. How should JWT Auth be generated?',
+  CHOICES: [
+    {
+      name: 'Install axios and generate axios-based auth service (Recommended)',
+      value: JWT_AUTH_CLIENTS.AXIOS
+    },
+    {
+      name: 'Generate fetch-based auth service without axios',
+      value: JWT_AUTH_CLIENTS.FETCH
+    }
+  ]
+};
+
+export const JWT_NEXT_STEPS = `JWT Auth architecture setup complete!
+
+Next steps:
+1. Wrap your app with AuthProvider:
+   import { AuthProvider } from './context/AuthContext';
+
+   <AuthProvider>
+     <App />
+   </AuthProvider>
+
+2. Protect private UI:
+   import ProtectedRoute from './components/ProtectedRoute';
+
+   <ProtectedRoute>
+     <Dashboard />
+   </ProtectedRoute>
+
+3. Set your API URL:
+   VITE_API_URL=https://your-api.com/api
+   or
+   REACT_APP_API_URL=https://your-api.com/api
+   or
+   NEXT_PUBLIC_API_URL=https://your-api.com/api
+
+4. Review src/config/authConfig.js and src/services/authService.js for your backend routes.`;

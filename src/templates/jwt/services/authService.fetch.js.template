@@ -1,0 +1,87 @@
+// Auth API service for login, registration, logout, and current-user lookup using fetch.
+
+import { authConfig } from '../config/authConfig';
+import { decodeToken, getToken, removeToken, setToken } from '../utils/tokenUtils';
+
+const authEndpoint = `${authConfig.apiBaseUrl}/auth`;
+
+const parseResponse = async (response, fallbackMessage) => {
+  const contentType = response.headers.get('content-type') || '';
+  const data = contentType.includes('application/json') ? await response.json() : null;
+
+  if (!response.ok) {
+    throw new Error(data?.message || fallbackMessage);
+  }
+
+  return data;
+};
+
+const getAuthHeaders = () => {
+  const token = getToken();
+
+  return token
+    ? {
+        Authorization: `Bearer ${token}`
+      }
+    : {};
+};
+
+export const login = async (email, password) => {
+  try {
+    const response = await fetch(`${authEndpoint}${authConfig.loginPath}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await parseResponse(response, 'Unable to log in.');
+    const token = data?.token;
+
+    if (!token) {
+      throw new Error('Login response did not include a JWT token.');
+    }
+
+    setToken(token);
+
+    return {
+      token,
+      user: data?.user || decodeToken(token)
+    };
+  } catch (error) {
+    throw new Error(error.message || 'Unable to log in.');
+  }
+};
+
+export const register = async (email, password, name) => {
+  try {
+    const response = await fetch(`${authEndpoint}${authConfig.registerPath}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, password, name })
+    });
+
+    return await parseResponse(response, 'Unable to register.');
+  } catch (error) {
+    throw new Error(error.message || 'Unable to register.');
+  }
+};
+
+export const logout = () => {
+  removeToken();
+};
+
+export const getCurrentUser = async () => {
+  try {
+    const response = await fetch(`${authEndpoint}${authConfig.mePath}`, {
+      headers: getAuthHeaders()
+    });
+
+    const data = await parseResponse(response, 'Unable to fetch the current user.');
+    return data?.user || data;
+  } catch (error) {
+    throw new Error(error.message || 'Unable to fetch the current user.');
+  }
+};

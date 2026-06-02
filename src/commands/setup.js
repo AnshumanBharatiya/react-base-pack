@@ -3,6 +3,7 @@
 import path from 'node:path';
 import { ANSWER_KEYS, CLI_MESSAGES, FEATURES, SOURCE_DIRECTORY } from '../constants/index.js';
 import { generateFolderStructure } from '../generators/folderGenerator.js';
+import { generateJWTSetup } from '../generators/jwtGenerator.js';
 import { generateReduxSetup } from '../generators/reduxGenerator.js';
 import { showInstallerSpinner } from '../utils/installer.js';
 import { logger } from '../utils/logger.js';
@@ -28,8 +29,17 @@ export async function runSetup(answers, projectType) {
       await generateReduxSetup(targetPath);
     }
 
+    if (selectedFeatures.includes(FEATURES.JWT_AUTH)) {
+      const targetPath = path.join(process.cwd(), SOURCE_DIRECTORY);
+      await generateJWTSetup(targetPath);
+    }
+
     selectedFeatures
-      .filter((feature) => ![FEATURES.FOLDER_ARCHITECTURE, FEATURES.REDUX_TOOLKIT].includes(feature))
+      .filter((feature) => ![
+        FEATURES.FOLDER_ARCHITECTURE,
+        FEATURES.REDUX_TOOLKIT,
+        FEATURES.JWT_AUTH
+      ].includes(feature))
       .forEach((feature) => {
         const spinner = showInstallerSpinner(`${CLI_MESSAGES.FEATURE_COMING_SOON} ${feature}`);
 

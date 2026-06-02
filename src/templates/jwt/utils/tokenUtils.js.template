@@ -1,0 +1,63 @@
+// JWT token storage and decoding helpers with Base64URL-safe parsing.
+
+import { authConfig } from '../config/authConfig';
+
+const canUseStorage = () => typeof window !== 'undefined' && Boolean(window.localStorage);
+
+const decodeBase64Url = (value) => {
+  const base64 = value.replace(/-/g, '+').replace(/_/g, '/');
+  const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=');
+
+  if (typeof atob === 'function') {
+    return atob(padded);
+  }
+
+  if (typeof Buffer !== 'undefined') {
+    return Buffer.from(padded, 'base64').toString('utf-8');
+  }
+
+  throw new Error('No Base64 decoder is available in this environment.');
+};
+
+export const getToken = () => {
+  if (!canUseStorage()) {
+    return null;
+  }
+
+  return window.localStorage.getItem(authConfig.tokenKey);
+};
+
+export const setToken = (token) => {
+  if (canUseStorage()) {
+    window.localStorage.setItem(authConfig.tokenKey, token);
+  }
+};
+
+export const removeToken = () => {
+  if (canUseStorage()) {
+    window.localStorage.removeItem(authConfig.tokenKey);
+  }
+};
+
+export const decodeToken = (token) => {
+  try {
+    if (!token || token.split('.').length < 2) {
+      return null;
+    }
+
+    const payload = token.split('.')[1];
+    return JSON.parse(decodeBase64Url(payload));
+  } catch {
+    return null;
+  }
+};
+
+export const isTokenExpired = (token) => {
+  const decodedToken = decodeToken(token);
+
+  if (!decodedToken?.exp) {
+    return true;
+  }
+
+  return decodedToken.exp * 1000 <= Date.now();
+};

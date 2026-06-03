@@ -1,0 +1,18 @@
+// Convenience hook for reading JWT auth state from AuthContext.
+
+import { useAuthContext } from '../context/AuthContext';
+
+export const useAuth = () => {
+  const { user, isAuthenticated, login, logout, loading, authLoading } = useAuthContext();
+
+  return {
+    user,
+    isAuthenticated,
+    login,
+    logout,
+    loading,
+    authLoading,
+  };
+};
+
+export default useAuth;

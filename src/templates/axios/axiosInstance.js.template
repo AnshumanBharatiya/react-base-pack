@@ -1,0 +1,51 @@
+// Shared axios instance with auth-token injection and response handling.
+
+import axios from 'axios';
+import { getToken, removeToken } from '../utils/tokenUtils';
+
+const viteApiUrl = import.meta.env?.VITE_API_URL;
+const craApiUrl = typeof process !== 'undefined' ? process.env?.REACT_APP_API_URL : undefined;
+const nextApiUrl = typeof process !== 'undefined' ? process.env?.NEXT_PUBLIC_API_URL : undefined;
+
+const axiosInstance = axios.create({
+  baseURL: viteApiUrl || craApiUrl || nextApiUrl || '',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = getToken();
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error.response?.status;
+
+    if (status === 401) {
+      removeToken();
+
+      if (typeof window !== 'undefined') {
+        window.location.assign('/login');
+      }
+    }
+
+    if (status === 500) {
+      console.warn('Server error. Please try again later.');
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+export default axiosInstance;

@@ -9,6 +9,16 @@ export const PROJECT_TYPES = {
 };
 export const SUPPORTED_PROJECT_TYPES = [PROJECT_TYPES.VITE, PROJECT_TYPES.CRA, PROJECT_TYPES.NEXT];
 
+export const LANGUAGES = {
+  JAVASCRIPT: 'javascript',
+  TYPESCRIPT: 'typescript'
+};
+
+export const LANGUAGE_LABELS = {
+  [LANGUAGES.JAVASCRIPT]: 'JavaScript',
+  [LANGUAGES.TYPESCRIPT]: 'TypeScript'
+};
+
 export const TAGLINE = 'Enterprise React architecture, injected into your existing app.';
 
 export const BANNER_TEXT = `
@@ -32,6 +42,7 @@ export const CLI_MESSAGES = {
   DETECTING_PROJECT: 'Detecting React project type...',
   PROJECT_NOT_FOUND: 'No supported React project detected. Run this inside a Vite, CRA, or Next.js project.',
   PROJECT_DETECTED: 'Detected React project type:',
+  LANGUAGE_DETECTED: 'Detected project language:',
   FOUNDATION_READY: 'Foundation ready. Run phase setup next.',
   CREATING_FOLDER_ARCHITECTURE: 'Creating folder architecture...',
   FOLDER_ARCHITECTURE_READY: 'Folder architecture created successfully.',
@@ -53,7 +64,14 @@ export const CLI_MESSAGES = {
   AXIOS_FOUND: 'Axios detected. Generating axios-based auth service.',
   AXIOS_INSTALL_SELECTED: 'Installing axios and generating axios-based auth service.',
   FETCH_AUTH_SELECTED: 'Generating fetch-based auth service without axios.',
-  JWT_FILE_CREATED: 'Created auth file:'
+  JWT_FILE_CREATED: 'Created auth file:',
+  SETTING_UP_AXIOS: 'Setting up Axios...',
+  AXIOS_SETUP_COMPLETE: 'Axios setup complete!',
+  AXIOS_INSTANCE_EXISTS: 'Axios instance already exists, skipping:',
+  SETTING_UP_ROUTER: 'Setting up React Router...',
+  ROUTER_SETUP_COMPLETE: 'React Router setup complete!',
+  ROUTER_FILE_EXISTS: 'Router file already exists, skipping:',
+  SETUP_SUMMARY: 'Selected setup complete:'
 };
 
 export const PROJECT_TYPE_LABELS = {
@@ -210,8 +228,12 @@ export const PACKAGE_FIELDS = {
   VITE: 'vite',
   REACT_SCRIPTS: 'react-scripts',
   NEXT: 'next',
-  AXIOS: 'axios'
+  AXIOS: 'axios',
+  REACT_ROUTER_DOM: 'react-router-dom',
+  TYPESCRIPT: 'typescript'
 };
+
+export const TSCONFIG_FILE = 'tsconfig.json';
 
 export const NPM_COMMANDS = {
   INSTALL: 'install',
@@ -259,6 +281,11 @@ export const REDUX_PACKAGES = ['@reduxjs/toolkit@latest', 'react-redux@latest'];
 
 export const REDUX_TEMPLATE_DIRECTORY = 'redux';
 
+export const REDUX_TEMPLATE_DIRECTORIES = {
+  [LANGUAGES.JAVASCRIPT]: 'redux',
+  [LANGUAGES.TYPESCRIPT]: 'redux-ts'
+};
+
 export const REDUX_DIRECTORIES = {
   STORE: 'store',
   HOOKS: 'hooks',
@@ -266,15 +293,21 @@ export const REDUX_DIRECTORIES = {
 };
 
 export const REDUX_TEMPLATE_FILES = {
-  STORE: 'store.js.template',
-  HOOKS: 'reduxHooks.js.template',
-  SLICE: 'exampleSlice.js.template'
+  STORE_JS: 'store.js.template',
+  STORE_TS: 'store.ts.template',
+  HOOKS_JS: 'reduxHooks.js.template',
+  HOOKS_TS: 'reduxHooks.ts.template',
+  SLICE_JS: 'exampleSlice.js.template',
+  SLICE_TS: 'exampleSlice.ts.template'
 };
 
 export const REDUX_OUTPUT_FILES = {
-  STORE: 'store.js',
-  HOOKS: 'reduxHooks.js',
-  SLICE: 'exampleSlice.js'
+  STORE_JS: 'store.js',
+  STORE_TS: 'store.ts',
+  HOOKS_JS: 'reduxHooks.js',
+  HOOKS_TS: 'reduxHooks.ts',
+  SLICE_JS: 'exampleSlice.js',
+  SLICE_TS: 'exampleSlice.ts'
 };
 
 export const REDUX_NEXT_STEPS = `Redux Toolkit setup complete!
@@ -295,6 +328,11 @@ Next steps:
 
 export const JWT_TEMPLATE_DIRECTORY = 'jwt';
 
+export const JWT_TEMPLATE_DIRECTORIES = {
+  [LANGUAGES.JAVASCRIPT]: 'jwt',
+  [LANGUAGES.TYPESCRIPT]: 'jwt-ts'
+};
+
 export const JWT_DIRECTORIES = {
   SERVICES: 'services',
   HOOKS: 'hooks',
@@ -307,53 +345,70 @@ export const JWT_DIRECTORIES = {
 export const JWT_TEMPLATE_FILES = {
   AUTH_SERVICE_AXIOS: 'authService.axios.js.template',
   AUTH_SERVICE_FETCH: 'authService.fetch.js.template',
+  AUTH_SERVICE_AXIOS_TS: 'authService.axios.ts.template',
+  AUTH_SERVICE_FETCH_TS: 'authService.fetch.ts.template',
   USE_AUTH: 'useAuth.js.template',
+  USE_AUTH_TS: 'useAuth.ts.template',
   AUTH_CONTEXT: 'AuthContext.jsx.template',
+  AUTH_CONTEXT_TS: 'AuthContext.tsx.template',
   TOKEN_UTILS: 'tokenUtils.js.template',
+  TOKEN_UTILS_TS: 'tokenUtils.ts.template',
   PROTECTED_ROUTE: 'ProtectedRoute.jsx.template',
-  AUTH_CONFIG: 'authConfig.js.template'
+  PROTECTED_ROUTE_TS: 'ProtectedRoute.tsx.template',
+  AUTH_CONFIG: 'authConfig.js.template',
+  AUTH_CONFIG_TS: 'authConfig.ts.template'
 };
 
 export const JWT_OUTPUT_FILES = {
-  AUTH_SERVICE: 'authService.js',
-  USE_AUTH: 'useAuth.js',
-  AUTH_CONTEXT: 'AuthContext.jsx',
-  TOKEN_UTILS: 'tokenUtils.js',
-  PROTECTED_ROUTE: 'ProtectedRoute.jsx',
-  AUTH_CONFIG: 'authConfig.js'
+  AUTH_SERVICE_JS: 'authService.js',
+  AUTH_SERVICE_TS: 'authService.ts',
+  USE_AUTH_JS: 'useAuth.js',
+  USE_AUTH_TS: 'useAuth.ts',
+  AUTH_CONTEXT_JS: 'AuthContext.jsx',
+  AUTH_CONTEXT_TS: 'AuthContext.tsx',
+  TOKEN_UTILS_JS: 'tokenUtils.js',
+  TOKEN_UTILS_TS: 'tokenUtils.ts',
+  PROTECTED_ROUTE_JS: 'ProtectedRoute.jsx',
+  PROTECTED_ROUTE_TS: 'ProtectedRoute.tsx',
+  AUTH_CONFIG_JS: 'authConfig.js',
+  AUTH_CONFIG_TS: 'authConfig.ts'
 };
 
 export const JWT_TEMPLATE_MAPPINGS = [
   {
     directory: JWT_DIRECTORIES.HOOKS,
     template: JWT_TEMPLATE_FILES.USE_AUTH,
-    output: JWT_OUTPUT_FILES.USE_AUTH
+    output: JWT_OUTPUT_FILES.USE_AUTH_JS
   },
   {
     directory: JWT_DIRECTORIES.CONTEXT,
     template: JWT_TEMPLATE_FILES.AUTH_CONTEXT,
-    output: JWT_OUTPUT_FILES.AUTH_CONTEXT
+    output: JWT_OUTPUT_FILES.AUTH_CONTEXT_JS
   },
   {
     directory: JWT_DIRECTORIES.UTILS,
     template: JWT_TEMPLATE_FILES.TOKEN_UTILS,
-    output: JWT_OUTPUT_FILES.TOKEN_UTILS
+    output: JWT_OUTPUT_FILES.TOKEN_UTILS_JS
   },
   {
     directory: JWT_DIRECTORIES.COMPONENTS,
     template: JWT_TEMPLATE_FILES.PROTECTED_ROUTE,
-    output: JWT_OUTPUT_FILES.PROTECTED_ROUTE
+    output: JWT_OUTPUT_FILES.PROTECTED_ROUTE_JS
   },
   {
     directory: JWT_DIRECTORIES.CONFIG,
     template: JWT_TEMPLATE_FILES.AUTH_CONFIG,
-    output: JWT_OUTPUT_FILES.AUTH_CONFIG
+    output: JWT_OUTPUT_FILES.AUTH_CONFIG_JS
   }
 ];
 
 export const AXIOS_PACKAGE = 'axios';
 
 export const AXIOS_LATEST_PACKAGE = 'axios@latest';
+
+export const REACT_ROUTER_PACKAGE = 'react-router-dom';
+
+export const REACT_ROUTER_LATEST_PACKAGE = 'react-router-dom@6';
 
 export const JWT_AUTH_CLIENTS = {
   AXIOS: 'axios',
@@ -400,3 +455,81 @@ Next steps:
    NEXT_PUBLIC_API_URL=https://your-api.com/api
 
 4. Review src/config/authConfig.js and src/services/authService.js for your backend routes.`;
+
+export const AXIOS_TEMPLATE_DIRECTORIES = {
+  [LANGUAGES.JAVASCRIPT]: 'axios',
+  [LANGUAGES.TYPESCRIPT]: 'axios-ts'
+};
+
+export const AXIOS_TEMPLATE_FILES = {
+  [LANGUAGES.JAVASCRIPT]: 'axiosInstance.js.template',
+  [LANGUAGES.TYPESCRIPT]: 'axiosInstance.ts.template'
+};
+
+export const AXIOS_OUTPUT_FILES = {
+  [LANGUAGES.JAVASCRIPT]: 'axiosInstance.js',
+  [LANGUAGES.TYPESCRIPT]: 'axiosInstance.ts'
+};
+
+export const AXIOS_NEXT_STEPS = `Axios setup complete!
+
+Next steps:
+1. Import axiosInstance instead of axios directly:
+   import axiosInstance from './config/axiosInstance';
+
+2. Set your API URL:
+   VITE_API_URL=https://your-api.com/api
+   or
+   REACT_APP_API_URL=https://your-api.com/api
+   or
+   NEXT_PUBLIC_API_URL=https://your-api.com/api`;
+
+export const ROUTER_TEMPLATE_DIRECTORIES = {
+  [LANGUAGES.JAVASCRIPT]: 'router',
+  [LANGUAGES.TYPESCRIPT]: 'router-ts'
+};
+
+export const ROUTER_DIRECTORIES = {
+  ROUTES: 'routes',
+  PAGES: 'pages'
+};
+
+export const ROUTER_TEMPLATE_FILES = {
+  APP_ROUTER_JS: 'AppRouter.jsx.template',
+  APP_ROUTER_PROTECTED_JS: 'AppRouter.protected.jsx.template',
+  APP_ROUTER_TS: 'AppRouter.tsx.template',
+  APP_ROUTER_PROTECTED_TS: 'AppRouter.protected.tsx.template',
+  ROUTES_JS: 'routes.js.template',
+  ROUTES_TS: 'routes.ts.template',
+  HOME_PAGE_JS: 'HomePage.jsx.template',
+  HOME_PAGE_TS: 'HomePage.tsx.template',
+  LOGIN_PAGE_JS: 'LoginPage.jsx.template',
+  LOGIN_PAGE_TS: 'LoginPage.tsx.template',
+  NOT_FOUND_PAGE_JS: 'NotFoundPage.jsx.template',
+  NOT_FOUND_PAGE_TS: 'NotFoundPage.tsx.template'
+};
+
+export const ROUTER_OUTPUT_FILES = {
+  APP_ROUTER_JS: 'AppRouter.jsx',
+  APP_ROUTER_TS: 'AppRouter.tsx',
+  ROUTES_JS: 'routes.js',
+  ROUTES_TS: 'routes.ts',
+  HOME_PAGE_JS: 'HomePage.jsx',
+  HOME_PAGE_TS: 'HomePage.tsx',
+  LOGIN_PAGE_JS: 'LoginPage.jsx',
+  LOGIN_PAGE_TS: 'LoginPage.tsx',
+  NOT_FOUND_PAGE_JS: 'NotFoundPage.jsx',
+  NOT_FOUND_PAGE_TS: 'NotFoundPage.tsx'
+};
+
+export const ROUTER_NEXT_STEPS = `React Router setup complete!
+
+Next steps:
+1. Replace App.jsx/App.tsx content with:
+   import AppRouter from './routes/AppRouter';
+
+   export default function App() {
+     return <AppRouter />;
+   }
+
+2. Edit src/routes/routes.js or src/routes/routes.ts to add real routes.`;

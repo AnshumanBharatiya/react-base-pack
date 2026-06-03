@@ -12,9 +12,9 @@ import {
   JWT_DIRECTORIES,
   JWT_NEXT_STEPS,
   JWT_OUTPUT_FILES,
-  JWT_TEMPLATE_DIRECTORY,
   JWT_TEMPLATE_FILES,
-  JWT_TEMPLATE_MAPPINGS,
+  JWT_TEMPLATE_DIRECTORIES,
+  LANGUAGES,
   PACKAGE_FIELDS,
   PACKAGE_MANIFEST
 } from '../constants/index.js';
@@ -24,7 +24,6 @@ import { logger } from '../utils/logger.js';
 
 const currentFilePath = fileURLToPath(import.meta.url);
 const currentDirectory = path.dirname(currentFilePath);
-const templatesRoot = path.join(currentDirectory, '..', 'templates', JWT_TEMPLATE_DIRECTORY);
 
 /**
  * Checks whether axios is declared in the user's project.
@@ -85,32 +84,75 @@ async function resolveAuthClient() {
  * Creates the auth-service template mapping for the selected HTTP client.
  *
  * @param {'axios'|'fetch'} authClient Selected auth client.
+ * @param {'typescript'|'javascript'} language Detected project language.
  * @returns {object} Template mapping for authService.js.
  */
-function createAuthServiceMapping(authClient) {
+function createAuthServiceMapping(authClient, language) {
+  const isTypeScript = language === LANGUAGES.TYPESCRIPT;
+
   return {
     directory: JWT_DIRECTORIES.SERVICES,
     template: authClient === JWT_AUTH_CLIENTS.AXIOS
-      ? JWT_TEMPLATE_FILES.AUTH_SERVICE_AXIOS
-      : JWT_TEMPLATE_FILES.AUTH_SERVICE_FETCH,
-    output: JWT_OUTPUT_FILES.AUTH_SERVICE
+      ? (isTypeScript ? JWT_TEMPLATE_FILES.AUTH_SERVICE_AXIOS_TS : JWT_TEMPLATE_FILES.AUTH_SERVICE_AXIOS)
+      : (isTypeScript ? JWT_TEMPLATE_FILES.AUTH_SERVICE_FETCH_TS : JWT_TEMPLATE_FILES.AUTH_SERVICE_FETCH),
+    output: isTypeScript ? JWT_OUTPUT_FILES.AUTH_SERVICE_TS : JWT_OUTPUT_FILES.AUTH_SERVICE_JS
   };
+}
+
+/**
+ * Creates template mappings for non-service JWT files.
+ *
+ * @param {'typescript'|'javascript'} language Detected project language.
+ * @returns {object[]} JWT template mappings.
+ */
+function createJWTTemplateMappings(language) {
+  const isTypeScript = language === LANGUAGES.TYPESCRIPT;
+
+  return [
+    {
+      directory: JWT_DIRECTORIES.HOOKS,
+      template: isTypeScript ? JWT_TEMPLATE_FILES.USE_AUTH_TS : JWT_TEMPLATE_FILES.USE_AUTH,
+      output: isTypeScript ? JWT_OUTPUT_FILES.USE_AUTH_TS : JWT_OUTPUT_FILES.USE_AUTH_JS
+    },
+    {
+      directory: JWT_DIRECTORIES.CONTEXT,
+      template: isTypeScript ? JWT_TEMPLATE_FILES.AUTH_CONTEXT_TS : JWT_TEMPLATE_FILES.AUTH_CONTEXT,
+      output: isTypeScript ? JWT_OUTPUT_FILES.AUTH_CONTEXT_TS : JWT_OUTPUT_FILES.AUTH_CONTEXT_JS
+    },
+    {
+      directory: JWT_DIRECTORIES.UTILS,
+      template: isTypeScript ? JWT_TEMPLATE_FILES.TOKEN_UTILS_TS : JWT_TEMPLATE_FILES.TOKEN_UTILS,
+      output: isTypeScript ? JWT_OUTPUT_FILES.TOKEN_UTILS_TS : JWT_OUTPUT_FILES.TOKEN_UTILS_JS
+    },
+    {
+      directory: JWT_DIRECTORIES.COMPONENTS,
+      template: isTypeScript ? JWT_TEMPLATE_FILES.PROTECTED_ROUTE_TS : JWT_TEMPLATE_FILES.PROTECTED_ROUTE,
+      output: isTypeScript ? JWT_OUTPUT_FILES.PROTECTED_ROUTE_TS : JWT_OUTPUT_FILES.PROTECTED_ROUTE_JS
+    },
+    {
+      directory: JWT_DIRECTORIES.CONFIG,
+      template: isTypeScript ? JWT_TEMPLATE_FILES.AUTH_CONFIG_TS : JWT_TEMPLATE_FILES.AUTH_CONFIG,
+      output: isTypeScript ? JWT_OUTPUT_FILES.AUTH_CONFIG_TS : JWT_OUTPUT_FILES.AUTH_CONFIG_JS
+    }
+  ];
 }
 
 /**
  * Generates JWT authentication architecture files inside a target src directory.
  *
  * @param {string} targetPath Target src directory path.
+ * @param {'typescript'|'javascript'} language Detected project language.
  * @returns {Promise<void>}
  */
-export async function generateJWTSetup(targetPath) {
+export async function generateJWTSetup(targetPath, language = LANGUAGES.JAVASCRIPT) {
   const spinner = showInstallerSpinner(CLI_MESSAGES.SETTING_UP_JWT);
 
   try {
     const authClient = await resolveAuthClient();
+    const templatesRoot = path.join(currentDirectory, '..', 'templates', JWT_TEMPLATE_DIRECTORIES[language]);
     const templateMappings = [
-      createAuthServiceMapping(authClient),
-      ...JWT_TEMPLATE_MAPPINGS
+      createAuthServiceMapping(authClient, language),
+      ...createJWTTemplateMappings(language)
     ];
 
     spinner.start();

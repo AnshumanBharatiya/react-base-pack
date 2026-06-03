@@ -7,12 +7,13 @@ import {
   CLI_MESSAGES,
   FEATURE_PROMPT_CHOICES,
   FEATURES,
+  LANGUAGE_LABELS,
   PROJECT_TYPE_LABELS,
   PROMPTS,
   SETUP_FEATURES
 } from '../constants/index.js';
 import { runSetup } from './setup.js';
-import { detectProjectType } from '../utils/detector.js';
+import { detectLanguage, detectProjectType } from '../utils/detector.js';
 import { logger } from '../utils/logger.js';
 import { showInstallerSpinner } from '../utils/installer.js';
 
@@ -36,6 +37,8 @@ export async function init() {
     }
 
     spinner.succeed(`${CLI_MESSAGES.PROJECT_DETECTED} ${PROJECT_TYPE_LABELS[projectType]}`);
+    const language = await detectLanguage();
+    logger.info(`${CLI_MESSAGES.LANGUAGE_DETECTED} ${LANGUAGE_LABELS[language]}`);
 
     const defaultProjectName = path.basename(process.cwd());
     const answers = await inquirer.prompt([
@@ -69,11 +72,12 @@ export async function init() {
 
     const phaseAnswers = {
       projectType,
+      language,
       projectName: answers[ANSWER_KEYS.PROJECT_NAME],
       features: answers[ANSWER_KEYS.FEATURES]
     };
 
-    await runSetup(phaseAnswers, projectType);
+    await runSetup(phaseAnswers, projectType, language);
     logger.success(CLI_MESSAGES.SETUP_COMPLETE);
     return phaseAnswers;
   } catch (error) {

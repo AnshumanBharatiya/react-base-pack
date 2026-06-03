@@ -1,0 +1,25 @@
+// React Router v6 app router with ProtectedRoute integration.
+
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import ProtectedRoute from '../components/ProtectedRoute';
+import { routes } from './routes';
+
+const AppRouter = () => {
+  return (
+    <BrowserRouter>
+      <Routes>
+        {routes.map((route) => {
+          const element = route.protected ? (
+            <ProtectedRoute>{route.element}</ProtectedRoute>
+          ) : (
+            route.element
+          );
+
+          return <Route key={route.path} path={route.path} element={element} />;
+        })}
+      </Routes>
+    </BrowserRouter>
+  );
+};
+
+export default AppRouter;

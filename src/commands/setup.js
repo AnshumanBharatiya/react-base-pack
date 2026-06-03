@@ -1,10 +1,13 @@
 // Setup command orchestrator for running selected react-base-pack feature generators.
 
 import path from 'node:path';
-import { ANSWER_KEYS, CLI_MESSAGES, FEATURES, SOURCE_DIRECTORY } from '../constants/index.js';
+import chalk from 'chalk';
+import { ANSWER_KEYS, CLI_MESSAGES, FEATURES, LANGUAGES, SOURCE_DIRECTORY } from '../constants/index.js';
+import { generateAxiosSetup } from '../generators/axiosGenerator.js';
 import { generateFolderStructure } from '../generators/folderGenerator.js';
 import { generateJWTSetup } from '../generators/jwtGenerator.js';
 import { generateReduxSetup } from '../generators/reduxGenerator.js';
+import { generateRouterSetup } from '../generators/routerGenerator.js';
 import { showInstallerSpinner } from '../utils/installer.js';
 import { logger } from '../utils/logger.js';
 
@@ -13,32 +16,41 @@ import { logger } from '../utils/logger.js';
  *
  * @param {object} answers Answers collected from the init command.
  * @param {string} projectType Detected project type.
+ * @param {'typescript'|'javascript'} language Detected project language.
  * @returns {Promise<void>}
  */
-export async function runSetup(answers, projectType) {
+export async function runSetup(answers, projectType, language = LANGUAGES.JAVASCRIPT) {
   try {
     const selectedFeatures = answers[ANSWER_KEYS.FEATURES] || [];
+    const targetPath = path.join(process.cwd(), SOURCE_DIRECTORY);
 
     if (selectedFeatures.includes(FEATURES.FOLDER_ARCHITECTURE)) {
-      const targetPath = path.join(process.cwd(), SOURCE_DIRECTORY);
       await generateFolderStructure(targetPath);
     }
 
     if (selectedFeatures.includes(FEATURES.REDUX_TOOLKIT)) {
-      const targetPath = path.join(process.cwd(), SOURCE_DIRECTORY);
-      await generateReduxSetup(targetPath);
+      await generateReduxSetup(targetPath, language);
+    }
+
+    if (selectedFeatures.includes(FEATURES.AXIOS_SETUP)) {
+      await generateAxiosSetup(targetPath, projectType, language);
     }
 
     if (selectedFeatures.includes(FEATURES.JWT_AUTH)) {
-      const targetPath = path.join(process.cwd(), SOURCE_DIRECTORY);
-      await generateJWTSetup(targetPath);
+      await generateJWTSetup(targetPath, language);
+    }
+
+    if (selectedFeatures.includes(FEATURES.REACT_ROUTER)) {
+      await generateRouterSetup(targetPath, language);
     }
 
     selectedFeatures
       .filter((feature) => ![
         FEATURES.FOLDER_ARCHITECTURE,
         FEATURES.REDUX_TOOLKIT,
-        FEATURES.JWT_AUTH
+        FEATURES.AXIOS_SETUP,
+        FEATURES.JWT_AUTH,
+        FEATURES.REACT_ROUTER
       ].includes(feature))
       .forEach((feature) => {
         const spinner = showInstallerSpinner(`${CLI_MESSAGES.FEATURE_COMING_SOON} ${feature}`);
@@ -46,6 +58,9 @@ export async function runSetup(answers, projectType) {
         spinner.start();
         spinner.succeed(`${CLI_MESSAGES.FEATURE_COMING_SOON} ${feature} for ${projectType}`);
       });
+
+    logger.success(`${CLI_MESSAGES.SETUP_SUMMARY} ${selectedFeatures.join(', ')}`);
+    console.log(chalk.cyan(`${projectType} / ${language}`));
   } catch (error) {
     logger.error(error.message || CLI_MESSAGES.UNEXPECTED_ERROR);
     process.exitCode = 1;

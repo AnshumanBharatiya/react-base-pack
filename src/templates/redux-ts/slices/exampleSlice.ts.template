@@ -1,0 +1,57 @@
+import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
+
+interface ExamplePayload {
+  data: string;
+}
+
+interface ExampleState {
+  data: ExamplePayload | null;
+  loading: boolean;
+  error: string | null;
+}
+
+const initialState: ExampleState = {
+  data: null,
+  loading: false,
+  error: null,
+};
+
+export const fetchExampleData = createAsyncThunk<ExamplePayload, void, { rejectValue: string }>(
+  'example/fetchData',
+  async (_, { rejectWithValue }) => {
+    try {
+      // Replace with real API call
+      return { data: 'example' };
+    } catch (error) {
+      return rejectWithValue(error instanceof Error ? error.message : 'Unable to fetch example data.');
+    }
+  }
+);
+
+const exampleSlice = createSlice({
+  name: 'example',
+  initialState,
+  reducers: {
+    clearExample: (state) => {
+      state.data = null;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchExampleData.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchExampleData.fulfilled, (state, action: PayloadAction<ExamplePayload>) => {
+        state.loading = false;
+        state.data = action.payload;
+      })
+      .addCase(fetchExampleData.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Unable to fetch example data.';
+      });
+  },
+});
+
+export const { clearExample } = exampleSlice.actions;
+export default exampleSlice.reducer;

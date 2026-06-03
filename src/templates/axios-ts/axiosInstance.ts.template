@@ -1,0 +1,54 @@
+// Shared axios instance with auth-token injection and response handling.
+
+import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
+import { getToken, removeToken } from '../utils/tokenUtils';
+
+const viteApiUrl = import.meta.env?.VITE_API_URL;
+const runtimeEnv = 'process' in globalThis
+  ? (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env
+  : undefined;
+const craApiUrl = runtimeEnv?.REACT_APP_API_URL;
+const nextApiUrl = runtimeEnv?.NEXT_PUBLIC_API_URL;
+
+const axiosInstance = axios.create({
+  baseURL: viteApiUrl || craApiUrl || nextApiUrl || '',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+axiosInstance.interceptors.request.use(
+  (config: InternalAxiosRequestConfig) => {
+    const token = getToken();
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error: AxiosError) => Promise.reject(error)
+);
+
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError) => {
+    const status = error.response?.status;
+
+    if (status === 401) {
+      removeToken();
+
+      if (typeof window !== 'undefined') {
+        window.location.assign('/login');
+      }
+    }
+
+    if (status === 500) {
+      console.warn('Server error. Please try again later.');
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+export default axiosInstance;

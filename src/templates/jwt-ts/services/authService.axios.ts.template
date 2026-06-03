@@ -1,0 +1,85 @@
+// Auth API service for login, registration, logout, and current-user lookup.
+
+import axios from 'axios';
+import { authConfig } from '../config/authConfig';
+import { decodeToken, getToken, removeToken, setToken, type TokenPayload } from '../utils/tokenUtils';
+
+export interface User extends TokenPayload {
+  id?: string;
+}
+
+export interface LoginPayload {
+  email: string;
+  password: string;
+}
+
+export interface RegisterPayload extends LoginPayload {
+  name: string;
+}
+
+export interface AuthResponse {
+  token: string;
+  user: User | null;
+}
+
+const authEndpoint = `${authConfig.apiBaseUrl}/auth`;
+
+const getErrorMessage = (error: unknown, fallbackMessage: string): string => {
+  if (axios.isAxiosError(error)) {
+    return (error.response?.data as { message?: string } | undefined)?.message || error.message || fallbackMessage;
+  }
+
+  return error instanceof Error ? error.message : fallbackMessage;
+};
+
+const getAuthHeaders = (): Record<string, string> => {
+  const token = getToken();
+
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
+
+export const login = async (email: string, password: string): Promise<AuthResponse> => {
+  try {
+    const response = await axios.post<AuthResponse>(`${authEndpoint}${authConfig.loginPath}`, { email, password });
+    const token = response.data?.token;
+
+    if (!token) {
+      throw new Error('Login response did not include a JWT token.');
+    }
+
+    setToken(token);
+
+    return {
+      token,
+      user: response.data?.user || decodeToken(token),
+    };
+  } catch (error) {
+    throw new Error(getErrorMessage(error, 'Unable to log in.'));
+  }
+};
+
+export const register = async (email: string, password: string, name: string): Promise<unknown> => {
+  try {
+    const response = await axios.post(`${authEndpoint}${authConfig.registerPath}`, { email, password, name });
+    return response.data;
+  } catch (error) {
+    throw new Error(getErrorMessage(error, 'Unable to register.'));
+  }
+};
+
+export const logout = (): void => {
+  removeToken();
+};
+
+export const getCurrentUser = async (): Promise<User> => {
+  try {
+    const response = await axios.get<{ user?: User } | User>(`${authEndpoint}${authConfig.mePath}`, {
+      headers: getAuthHeaders(),
+    });
+
+    const data = response.data as ({ user?: User } & User);
+    return data.user || data;
+  } catch (error) {
+    throw new Error(getErrorMessage(error, 'Unable to fetch the current user.'));
+  }
+};

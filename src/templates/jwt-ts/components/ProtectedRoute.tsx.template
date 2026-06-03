@@ -1,0 +1,32 @@
+// Route-independent protected wrapper for private React UI.
+
+import { useEffect, type ReactNode } from 'react';
+import { authConfig } from '../config/authConfig';
+import { useAuth } from '../hooks/useAuth';
+
+interface ProtectedRouteProps {
+  children: ReactNode;
+  redirectTo?: string;
+}
+
+const ProtectedRoute = ({ children, redirectTo = authConfig.loginPath }: ProtectedRouteProps) => {
+  const { isAuthenticated, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && !isAuthenticated && typeof window !== 'undefined') {
+      window.location.assign(redirectTo);
+    }
+  }, [isAuthenticated, loading, redirectTo]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  return children;
+};
+
+export default ProtectedRoute;

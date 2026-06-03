@@ -1,0 +1,7 @@
+// Home page placeholder.
+
+const HomePage = () => {
+  return <main>Home</main>;
+};
+
+export default HomePage;

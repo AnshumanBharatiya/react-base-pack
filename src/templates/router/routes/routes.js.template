@@ -1,0 +1,16 @@
+// Central route configuration.
+
+import { createElement } from 'react';
+import HomePage from '../pages/HomePage';
+import LoginPage from '../pages/LoginPage';
+import NotFoundPage from '../pages/NotFoundPage';
+
+const DashboardPage = () => createElement('div', null, 'Dashboard');
+
+export const routes = [
+  { path: '/', element: createElement(HomePage), protected: false, title: 'Home' },
+  { path: '/login', element: createElement(LoginPage), protected: false, title: 'Login' },
+  { path: '/register', element: createElement(LoginPage), protected: false, title: 'Register' },
+  { path: '/dashboard', element: createElement(DashboardPage), protected: true, title: 'Dashboard' },
+  { path: '/*', element: createElement(NotFoundPage), protected: false, title: 'Not Found' },
+];

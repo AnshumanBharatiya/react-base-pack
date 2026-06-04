@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import chalk from 'chalk';
 import {
   CLI_MESSAGES,
+  CLI_OPTIONS,
   LANGUAGES,
   REDUX_DIRECTORIES,
   REDUX_NEXT_STEPS,
@@ -45,9 +46,10 @@ function getReduxTemplateConfig(language) {
  *
  * @param {string} targetPath Target src directory path.
  * @param {'typescript'|'javascript'} language Detected project language.
+ * @param {object} [options] Generator behavior options.
  * @returns {Promise<void>}
  */
-export async function generateReduxSetup(targetPath, language = LANGUAGES.JAVASCRIPT) {
+export async function generateReduxSetup(targetPath, language = LANGUAGES.JAVASCRIPT, options = {}) {
   const spinner = showInstallerSpinner(CLI_MESSAGES.SETTING_UP_REDUX);
 
   try {
@@ -59,10 +61,25 @@ export async function generateReduxSetup(targetPath, language = LANGUAGES.JAVASC
       return;
     }
 
-    spinner.start();
-
     const hooksPath = path.join(storePath, REDUX_DIRECTORIES.HOOKS);
     const slicesPath = path.join(storePath, REDUX_DIRECTORIES.SLICES);
+    const storeOutputPath = path.join(storePath, templateConfig.storeOutput);
+    const hooksOutputPath = path.join(hooksPath, templateConfig.hooksOutput);
+    const sliceOutputPath = path.join(slicesPath, templateConfig.sliceOutput);
+
+    if (options[CLI_OPTIONS.DRY_RUN]) {
+      logger.info(`${CLI_MESSAGES.DRY_RUN_WOULD_CREATE} ${storePath}`);
+      logger.info(`${CLI_MESSAGES.DRY_RUN_WOULD_CREATE} ${hooksPath}`);
+      logger.info(`${CLI_MESSAGES.DRY_RUN_WOULD_CREATE} ${slicesPath}`);
+      logger.info(`${CLI_MESSAGES.DRY_RUN_WOULD_COPY} ${storeOutputPath}`);
+      logger.info(`${CLI_MESSAGES.DRY_RUN_WOULD_COPY} ${hooksOutputPath}`);
+      logger.info(`${CLI_MESSAGES.DRY_RUN_WOULD_COPY} ${sliceOutputPath}`);
+      await installDeps(REDUX_PACKAGES, false, options);
+      console.log(chalk.cyan(REDUX_NEXT_STEPS));
+      return;
+    }
+
+    spinner.start();
 
     await ensureDir(storePath);
     await ensureDir(hooksPath);
@@ -70,19 +87,19 @@ export async function generateReduxSetup(targetPath, language = LANGUAGES.JAVASC
 
     await copyTemplate(
       path.join(templateConfig.templatesRoot, REDUX_DIRECTORIES.STORE, templateConfig.storeTemplate),
-      path.join(storePath, templateConfig.storeOutput)
+      storeOutputPath
     );
     await copyTemplate(
       path.join(templateConfig.templatesRoot, REDUX_DIRECTORIES.HOOKS, templateConfig.hooksTemplate),
-      path.join(hooksPath, templateConfig.hooksOutput)
+      hooksOutputPath
     );
     await copyTemplate(
       path.join(templateConfig.templatesRoot, REDUX_DIRECTORIES.SLICES, templateConfig.sliceTemplate),
-      path.join(slicesPath, templateConfig.sliceOutput)
+      sliceOutputPath
     );
 
     spinner.succeed(CLI_MESSAGES.REDUX_SETUP_COMPLETE);
-    await installDeps(REDUX_PACKAGES);
+    await installDeps(REDUX_PACKAGES, false, options);
     logger.success(CLI_MESSAGES.REDUX_SETUP_COMPLETE);
     console.log(chalk.cyan(REDUX_NEXT_STEPS));
   } catch (error) {

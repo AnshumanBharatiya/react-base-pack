@@ -2,7 +2,14 @@
 
 import path from 'node:path';
 import chalk from 'chalk';
-import { ANSWER_KEYS, CLI_MESSAGES, FEATURES, LANGUAGES, SOURCE_DIRECTORY } from '../constants/index.js';
+import {
+  ANSWER_KEYS,
+  CLI_MESSAGES,
+  CLI_OPTIONS,
+  FEATURES,
+  LANGUAGES,
+  SOURCE_DIRECTORY
+} from '../constants/index.js';
 import { generateAxiosSetup } from '../generators/axiosGenerator.js';
 import { generateFolderStructure } from '../generators/folderGenerator.js';
 import { generateJWTSetup } from '../generators/jwtGenerator.js';
@@ -17,31 +24,36 @@ import { logger } from '../utils/logger.js';
  * @param {object} answers Answers collected from the init command.
  * @param {string} projectType Detected project type.
  * @param {'typescript'|'javascript'} language Detected project language.
+ * @param {object} [options] Setup behavior options.
  * @returns {Promise<void>}
  */
-export async function runSetup(answers, projectType, language = LANGUAGES.JAVASCRIPT) {
+export async function runSetup(answers, projectType, language = LANGUAGES.JAVASCRIPT, options = {}) {
   try {
     const selectedFeatures = answers[ANSWER_KEYS.FEATURES] || [];
     const targetPath = path.join(process.cwd(), SOURCE_DIRECTORY);
 
+    if (options[CLI_OPTIONS.DRY_RUN]) {
+      logger.warn(CLI_MESSAGES.DRY_RUN_ACTIVE);
+    }
+
     if (selectedFeatures.includes(FEATURES.FOLDER_ARCHITECTURE)) {
-      await generateFolderStructure(targetPath);
+      await generateFolderStructure(targetPath, options);
     }
 
     if (selectedFeatures.includes(FEATURES.REDUX_TOOLKIT)) {
-      await generateReduxSetup(targetPath, language);
+      await generateReduxSetup(targetPath, language, options);
     }
 
     if (selectedFeatures.includes(FEATURES.AXIOS_SETUP)) {
-      await generateAxiosSetup(targetPath, projectType, language);
+      await generateAxiosSetup(targetPath, projectType, language, options);
     }
 
     if (selectedFeatures.includes(FEATURES.JWT_AUTH)) {
-      await generateJWTSetup(targetPath, language);
+      await generateJWTSetup(targetPath, language, options);
     }
 
     if (selectedFeatures.includes(FEATURES.REACT_ROUTER)) {
-      await generateRouterSetup(targetPath, language);
+      await generateRouterSetup(targetPath, language, options);
     }
 
     selectedFeatures

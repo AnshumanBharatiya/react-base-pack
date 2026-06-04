@@ -8,7 +8,10 @@
   },
   "scripts": {
     "start": "node bin/index.js",
-    "lint": "eslint src/**/*.js"
+    "lint": "eslint src/**/*.js bin/**/*.js test/**/*.js",
+    "test": "node --test",
+    "pack:dry-run": "npm pack --dry-run",
+    "prepublishOnly": "npm run lint && npm test && npm run pack:dry-run"
   },
   "keywords": [
     "react",
@@ -19,6 +22,20 @@
   ],
   "author": "Anshuman Bharatiya",
   "license": "MIT",
+  "homepage": "https://www.npmjs.com/package/react-base-pack",
+  "bugs": {
+    "url": "https://github.com/anshuman-bharatiya/react-base-pack/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anshuman-bharatiya/react-base-pack.git"
+  },
+  "files": [
+    "bin",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
   "engines": {
     "node": ">=18"
   },

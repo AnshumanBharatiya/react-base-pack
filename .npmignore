@@ -13,6 +13,8 @@ coverage
 .nyc_output
 .vscode
 .idea
+test
+*.tgz
 eslint.config.js
 BUIL.MD
 worklog.log

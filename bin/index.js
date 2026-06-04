@@ -5,6 +5,8 @@ import { Command } from 'commander';
 import { init } from '../src/commands/init.js';
 import {
   CLI_MESSAGES,
+  CLI_OPTION_DESCRIPTIONS,
+  CLI_OPTION_FLAGS,
   COMMAND_DESCRIPTIONS,
   COMMANDS,
   PACKAGE_NAME,
@@ -26,8 +28,10 @@ try {
   program
     .command(COMMANDS.INIT)
     .description(COMMAND_DESCRIPTIONS.INIT)
-    .action(async () => {
-      await init();
+    .option(CLI_OPTION_FLAGS.YES, CLI_OPTION_DESCRIPTIONS.YES)
+    .option(CLI_OPTION_FLAGS.DRY_RUN, CLI_OPTION_DESCRIPTIONS.DRY_RUN)
+    .action(async (options) => {
+      await init(options);
     });
 
   program.on('command:*', () => {

@@ -5,6 +5,7 @@ import ora from 'ora';
 import { execa } from 'execa';
 import {
   CLI_MESSAGES,
+  CLI_OPTIONS,
   LOCK_FILES,
   PACKAGE_MANAGER_INSTALL_CONFIG,
   PACKAGE_MANAGERS,
@@ -56,14 +57,20 @@ export async function detectPackageManager(targetPath = process.cwd()) {
  *
  * @param {string[]} packages Package names to install.
  * @param {boolean} [isDev=false] Whether packages should be installed as dev dependencies.
+ * @param {object} [options] Installer behavior options.
  * @returns {Promise<void>}
  */
-export async function installDeps(packages, isDev = false) {
+export async function installDeps(packages, isDev = false, options = {}) {
   const spinner = showInstallerSpinner(CLI_MESSAGES.INSTALLING_DEPENDENCIES);
 
   try {
     if (!Array.isArray(packages) || packages.length === 0) {
       logger.warn(CLI_MESSAGES.NO_PACKAGES_PROVIDED);
+      return;
+    }
+
+    if (options[CLI_OPTIONS.DRY_RUN]) {
+      logger.info(`${CLI_MESSAGES.DRY_RUN_WOULD_INSTALL} ${packages.join(', ')}`);
       return;
     }
 

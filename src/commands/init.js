@@ -5,6 +5,7 @@ import inquirer from 'inquirer';
 import {
   ANSWER_KEYS,
   CLI_MESSAGES,
+  CLI_OPTIONS,
   FEATURE_PROMPT_CHOICES,
   FEATURES,
   LANGUAGE_LABELS,
@@ -20,12 +21,21 @@ import { showInstallerSpinner } from '../utils/installer.js';
 /**
  * Runs the Phase 1 init command flow.
  *
+ * @param {object} [options] CLI options from commander.
  * @returns {Promise<object|null>} Stored setup answers for later phases, or null when unsupported.
  */
-export async function init() {
+export async function init(options = {}) {
   const spinner = showInstallerSpinner(CLI_MESSAGES.DETECTING_PROJECT);
 
   try {
+    if (options[CLI_OPTIONS.DRY_RUN]) {
+      logger.warn(CLI_MESSAGES.DRY_RUN_ACTIVE);
+    }
+
+    if (options[CLI_OPTIONS.YES]) {
+      logger.info(CLI_MESSAGES.YES_MODE_ACTIVE);
+    }
+
     spinner.start();
     const projectType = await detectProjectType();
 
@@ -41,34 +51,39 @@ export async function init() {
     logger.info(`${CLI_MESSAGES.LANGUAGE_DETECTED} ${LANGUAGE_LABELS[language]}`);
 
     const defaultProjectName = path.basename(process.cwd());
-    const answers = await inquirer.prompt([
-      {
-        type: 'input',
-        name: ANSWER_KEYS.PROJECT_NAME,
-        message: PROMPTS.PROJECT_NAME,
-        default: defaultProjectName
-      },
-      {
-        type: 'checkbox',
-        name: ANSWER_KEYS.FEATURES,
-        message: PROMPTS.FEATURES,
-        choices: FEATURE_PROMPT_CHOICES,
-        validate: (selectedFeatures) => {
-          if (selectedFeatures.length > 0) {
-            return true;
-          }
-
-          return CLI_MESSAGES.FEATURE_SELECTION_REQUIRED;
-        },
-        filter: (selectedFeatures) => {
-          if (selectedFeatures.includes(FEATURES.ALL)) {
-            return SETUP_FEATURES;
-          }
-
-          return selectedFeatures;
-        }
+    const answers = options[CLI_OPTIONS.YES]
+      ? {
+        [ANSWER_KEYS.PROJECT_NAME]: defaultProjectName,
+        [ANSWER_KEYS.FEATURES]: SETUP_FEATURES
       }
-    ]);
+      : await inquirer.prompt([
+        {
+          type: 'input',
+          name: ANSWER_KEYS.PROJECT_NAME,
+          message: PROMPTS.PROJECT_NAME,
+          default: defaultProjectName
+        },
+        {
+          type: 'checkbox',
+          name: ANSWER_KEYS.FEATURES,
+          message: PROMPTS.FEATURES,
+          choices: FEATURE_PROMPT_CHOICES,
+          validate: (selectedFeatures) => {
+            if (selectedFeatures.length > 0) {
+              return true;
+            }
+
+            return CLI_MESSAGES.FEATURE_SELECTION_REQUIRED;
+          },
+          filter: (selectedFeatures) => {
+            if (selectedFeatures.includes(FEATURES.ALL)) {
+              return SETUP_FEATURES;
+            }
+
+            return selectedFeatures;
+          }
+        }
+      ]);
 
     const phaseAnswers = {
       projectType,
@@ -77,7 +92,7 @@ export async function init() {
       features: answers[ANSWER_KEYS.FEATURES]
     };
 
-    await runSetup(phaseAnswers, projectType, language);
+    await runSetup(phaseAnswers, projectType, language, options);
     logger.success(CLI_MESSAGES.SETUP_COMPLETE);
     return phaseAnswers;
   } catch (error) {

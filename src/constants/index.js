@@ -36,6 +36,21 @@ export const COMMAND_DESCRIPTIONS = {
   INIT: 'Initialize the react-base-pack foundation in an existing React project.'
 };
 
+export const CLI_OPTIONS = {
+  YES: 'yes',
+  DRY_RUN: 'dryRun'
+};
+
+export const CLI_OPTION_FLAGS = {
+  YES: '--yes',
+  DRY_RUN: '--dry-run'
+};
+
+export const CLI_OPTION_DESCRIPTIONS = {
+  YES: 'Run init with recommended defaults and all features selected.',
+  DRY_RUN: 'Preview the setup without creating files or installing packages.'
+};
+
 export const CLI_MESSAGES = {
   UNKNOWN_COMMAND: 'Unknown command. Run "react-base-pack --help" to see available commands.',
   UNEXPECTED_ERROR: 'An unexpected error occurred.',
@@ -71,7 +86,13 @@ export const CLI_MESSAGES = {
   SETTING_UP_ROUTER: 'Setting up React Router...',
   ROUTER_SETUP_COMPLETE: 'React Router setup complete!',
   ROUTER_FILE_EXISTS: 'Router file already exists, skipping:',
-  SETUP_SUMMARY: 'Selected setup complete:'
+  SETUP_SUMMARY: 'Selected setup complete:',
+  DRY_RUN_ACTIVE: 'Dry run mode enabled. No files will be created and no packages will be installed.',
+  DRY_RUN_WOULD_CREATE: 'Dry run: would create:',
+  DRY_RUN_WOULD_COPY: 'Dry run: would copy:',
+  DRY_RUN_WOULD_INSTALL: 'Dry run: would install:',
+  YES_MODE_ACTIVE: 'Yes mode enabled. Using recommended defaults.',
+  CONFLICT_SUMMARY: 'Skipped existing paths:'
 };
 
 export const PROJECT_TYPE_LABELS = {

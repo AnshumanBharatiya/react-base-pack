@@ -10,6 +10,7 @@ import {
   AXIOS_TEMPLATE_DIRECTORIES,
   AXIOS_TEMPLATE_FILES,
   CLI_MESSAGES,
+  CLI_OPTIONS,
   JWT_DIRECTORIES,
   LANGUAGES,
   PACKAGE_FIELDS,
@@ -46,9 +47,10 @@ async function hasAxiosDependency() {
  * @param {string} targetPath Target src directory path.
  * @param {string} projectType Detected project type.
  * @param {'typescript'|'javascript'} language Detected project language.
+ * @param {object} [options] Generator behavior options.
  * @returns {Promise<void>}
  */
-export async function generateAxiosSetup(targetPath, projectType, language = LANGUAGES.JAVASCRIPT) {
+export async function generateAxiosSetup(targetPath, projectType, language = LANGUAGES.JAVASCRIPT, options = {}) {
   const spinner = showInstallerSpinner(CLI_MESSAGES.SETTING_UP_AXIOS);
 
   try {
@@ -62,7 +64,14 @@ export async function generateAxiosSetup(targetPath, projectType, language = LAN
     }
 
     if (!(await hasAxiosDependency())) {
-      await installDeps([AXIOS_LATEST_PACKAGE]);
+      await installDeps([AXIOS_LATEST_PACKAGE], false, options);
+    }
+
+    if (options[CLI_OPTIONS.DRY_RUN]) {
+      logger.info(`${CLI_MESSAGES.DRY_RUN_WOULD_CREATE} ${configPath}`);
+      logger.info(`${CLI_MESSAGES.DRY_RUN_WOULD_COPY} ${destinationPath}`);
+      console.log(chalk.cyan(AXIOS_NEXT_STEPS));
+      return;
     }
 
     spinner.start();

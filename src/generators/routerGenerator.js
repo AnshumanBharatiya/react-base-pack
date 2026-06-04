@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import chalk from 'chalk';
 import {
   CLI_MESSAGES,
+  CLI_OPTIONS,
   JWT_DIRECTORIES,
   JWT_OUTPUT_FILES,
   LANGUAGES,
@@ -104,14 +105,15 @@ function createRouterMappings(language, protectedRouteExists) {
  *
  * @param {string} targetPath Target src directory path.
  * @param {'typescript'|'javascript'} language Detected project language.
+ * @param {object} [options] Generator behavior options.
  * @returns {Promise<void>}
  */
-export async function generateRouterSetup(targetPath, language = LANGUAGES.JAVASCRIPT) {
+export async function generateRouterSetup(targetPath, language = LANGUAGES.JAVASCRIPT, options = {}) {
   const spinner = showInstallerSpinner(CLI_MESSAGES.SETTING_UP_ROUTER);
 
   try {
     if (!(await hasRouterDependency())) {
-      await installDeps([REACT_ROUTER_LATEST_PACKAGE]);
+      await installDeps([REACT_ROUTER_LATEST_PACKAGE], false, options);
     }
 
     spinner.start();
@@ -123,11 +125,21 @@ export async function generateRouterSetup(targetPath, language = LANGUAGES.JAVAS
       const destinationDirectory = path.join(targetPath, mapping.directory);
       const destinationPath = path.join(destinationDirectory, mapping.output);
 
-      await ensureDir(destinationDirectory);
+      if (!options[CLI_OPTIONS.DRY_RUN]) {
+        await ensureDir(destinationDirectory);
+      }
 
       if (await pathExists(destinationPath)) {
         spinner.stop();
         logger.warn(`${CLI_MESSAGES.ROUTER_FILE_EXISTS} ${destinationPath}`);
+        spinner.start();
+        continue;
+      }
+
+      if (options[CLI_OPTIONS.DRY_RUN]) {
+        spinner.stop();
+        logger.info(`${CLI_MESSAGES.DRY_RUN_WOULD_CREATE} ${destinationDirectory}`);
+        logger.info(`${CLI_MESSAGES.DRY_RUN_WOULD_COPY} ${path.join(templatesRoot, mapping.directory, mapping.template)} -> ${destinationPath}`);
         spinner.start();
         continue;
       }

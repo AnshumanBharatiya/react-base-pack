@@ -7,6 +7,7 @@ import inquirer from 'inquirer';
 import {
   AXIOS_LATEST_PACKAGE,
   CLI_MESSAGES,
+  CLI_OPTIONS,
   JWT_AUTH_CLIENT_PROMPT,
   JWT_AUTH_CLIENTS,
   JWT_DIRECTORIES,
@@ -46,9 +47,10 @@ async function hasAxiosDependency() {
 /**
  * Resolves which HTTP client the JWT auth service should use.
  *
+ * @param {object} [options] Generator behavior options.
  * @returns {Promise<'axios'|'fetch'>} Selected auth client.
  */
-async function resolveAuthClient() {
+async function resolveAuthClient(options = {}) {
   try {
     if (await hasAxiosDependency()) {
       logger.info(CLI_MESSAGES.AXIOS_FOUND);
@@ -56,6 +58,13 @@ async function resolveAuthClient() {
     }
 
     logger.warn(CLI_MESSAGES.AXIOS_NOT_FOUND);
+
+    if (options[CLI_OPTIONS.YES] || options[CLI_OPTIONS.DRY_RUN]) {
+      logger.info(CLI_MESSAGES.AXIOS_INSTALL_SELECTED);
+      await installDeps([AXIOS_LATEST_PACKAGE], false, options);
+      return JWT_AUTH_CLIENTS.AXIOS;
+    }
+
     const answer = await inquirer.prompt([
       {
         type: 'list',
@@ -68,7 +77,7 @@ async function resolveAuthClient() {
 
     if (answer[JWT_AUTH_CLIENT_PROMPT.NAME] === JWT_AUTH_CLIENTS.AXIOS) {
       logger.info(CLI_MESSAGES.AXIOS_INSTALL_SELECTED);
-      await installDeps([AXIOS_LATEST_PACKAGE]);
+      await installDeps([AXIOS_LATEST_PACKAGE], false, options);
       return JWT_AUTH_CLIENTS.AXIOS;
     }
 
@@ -142,13 +151,14 @@ function createJWTTemplateMappings(language) {
  *
  * @param {string} targetPath Target src directory path.
  * @param {'typescript'|'javascript'} language Detected project language.
+ * @param {object} [options] Generator behavior options.
  * @returns {Promise<void>}
  */
-export async function generateJWTSetup(targetPath, language = LANGUAGES.JAVASCRIPT) {
+export async function generateJWTSetup(targetPath, language = LANGUAGES.JAVASCRIPT, options = {}) {
   const spinner = showInstallerSpinner(CLI_MESSAGES.SETTING_UP_JWT);
 
   try {
-    const authClient = await resolveAuthClient();
+    const authClient = await resolveAuthClient(options);
     const templatesRoot = path.join(currentDirectory, '..', 'templates', JWT_TEMPLATE_DIRECTORIES[language]);
     const templateMappings = [
       createAuthServiceMapping(authClient, language),
@@ -156,18 +166,31 @@ export async function generateJWTSetup(targetPath, language = LANGUAGES.JAVASCRI
     ];
 
     spinner.start();
-    await ensureDir(targetPath);
+
+    if (!options[CLI_OPTIONS.DRY_RUN]) {
+      await ensureDir(targetPath);
+    }
 
     for (const mapping of templateMappings) {
       const destinationDirectory = path.join(targetPath, mapping.directory);
       const destinationPath = path.join(destinationDirectory, mapping.output);
       const templatePath = path.join(templatesRoot, mapping.directory, mapping.template);
 
-      await ensureDir(destinationDirectory);
+      if (!options[CLI_OPTIONS.DRY_RUN]) {
+        await ensureDir(destinationDirectory);
+      }
 
       if (await pathExists(destinationPath)) {
         spinner.stop();
         logger.warn(`${CLI_MESSAGES.JWT_FILE_EXISTS} ${destinationPath}`);
+        spinner.start();
+        continue;
+      }
+
+      if (options[CLI_OPTIONS.DRY_RUN]) {
+        spinner.stop();
+        logger.info(`${CLI_MESSAGES.DRY_RUN_WOULD_CREATE} ${destinationDirectory}`);
+        logger.info(`${CLI_MESSAGES.DRY_RUN_WOULD_COPY} ${templatePath} -> ${destinationPath}`);
         spinner.start();
         continue;
       }

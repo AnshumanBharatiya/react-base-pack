@@ -1,0 +1,23 @@
+// Example Zustand store for shared client state.
+
+import { create } from 'zustand';
+
+export const useExampleStore = create((set) => ({
+  data: null,
+  loading: false,
+  error: null,
+
+  fetchExampleData: async () => {
+    set({ loading: true, error: null });
+
+    try {
+      // Replace with a real API call.
+      const result = { data: 'example' };
+      set({ data: result, loading: false });
+    } catch (error) {
+      set({ error: error.message, loading: false });
+    }
+  },
+
+  clearExample: () => set({ data: null, error: null })
+}));

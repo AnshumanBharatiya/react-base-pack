@@ -61,11 +61,12 @@ test('runSetup dry-run does not create files or install dependencies', async () 
       {
         [ANSWER_KEYS.FEATURES]: [
           FEATURES.FOLDER_ARCHITECTURE,
-          FEATURES.REDUX_TOOLKIT,
+          FEATURES.STATE_MANAGEMENT,
           FEATURES.AXIOS_SETUP,
           FEATURES.JWT_AUTH,
           FEATURES.REACT_ROUTER
-        ]
+        ],
+        [ANSWER_KEYS.STATE_MANAGEMENT]: FEATURES.ZUSTAND
       },
       PROJECT_TYPES.VITE,
       LANGUAGES.JAVASCRIPT,

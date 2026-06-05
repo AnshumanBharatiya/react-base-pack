@@ -69,9 +69,13 @@ export const CLI_MESSAGES = {
   DEPENDENCIES_INSTALLED: 'Dependencies installed.',
   NO_PACKAGES_PROVIDED: 'No packages provided for installation.',
   INSTALL_FAILED: 'Dependency installation failed.',
+  STATE_MANAGEMENT_REQUIRED: 'Choose one state management option.',
   SETTING_UP_REDUX: 'Setting up Redux Toolkit...',
   REDUX_SETUP_COMPLETE: 'Redux Toolkit setup complete!',
   STORE_ALREADY_EXISTS: 'Redux store already exists, skipping Redux Toolkit setup:',
+  SETTING_UP_ZUSTAND: 'Setting up Zustand...',
+  ZUSTAND_SETUP_COMPLETE: 'Zustand setup complete!',
+  ZUSTAND_STORE_EXISTS: 'Zustand store already exists, skipping:',
   SETTING_UP_JWT: 'Setting up JWT Auth architecture...',
   JWT_SETUP_COMPLETE: 'JWT Auth architecture setup complete!',
   JWT_FILE_EXISTS: 'Auth file already exists, skipping:',
@@ -103,18 +107,35 @@ export const PROJECT_TYPE_LABELS = {
 
 export const ANSWER_KEYS = {
   PROJECT_NAME: 'projectName',
+  LANGUAGE: 'language',
+  STATE_MANAGEMENT: 'stateManagement',
   FEATURES: 'features'
 };
 
 export const PROMPTS = {
   PROJECT_NAME: 'What is your project name?',
+  LANGUAGE: 'Which code style should be generated?',
+  STATE_MANAGEMENT: 'Which state management setup do you want?',
   FEATURES: 'Which features do you want to set up?'
 };
+
+export const LANGUAGE_PROMPT_CHOICES = [
+  {
+    name: LANGUAGE_LABELS[LANGUAGES.JAVASCRIPT],
+    value: LANGUAGES.JAVASCRIPT
+  },
+  {
+    name: LANGUAGE_LABELS[LANGUAGES.TYPESCRIPT],
+    value: LANGUAGES.TYPESCRIPT
+  }
+];
 
 export const FEATURES = {
   ALL: 'All Features',
   FOLDER_ARCHITECTURE: 'Folder Architecture',
+  STATE_MANAGEMENT: 'State Management',
   REDUX_TOOLKIT: 'Redux Toolkit',
+  ZUSTAND: 'Zustand',
   AXIOS_SETUP: 'Axios Setup',
   JWT_AUTH: 'JWT Auth',
   REACT_ROUTER: 'React Router'
@@ -133,8 +154,8 @@ export const FEATURE_PROMPT_CHOICES = [
     checked: true
   },
   {
-    name: FEATURES.REDUX_TOOLKIT,
-    value: FEATURES.REDUX_TOOLKIT
+    name: FEATURES.STATE_MANAGEMENT,
+    value: FEATURES.STATE_MANAGEMENT
   },
   {
     name: FEATURES.AXIOS_SETUP,
@@ -152,10 +173,21 @@ export const FEATURE_PROMPT_CHOICES = [
 
 export const SETUP_FEATURES = [
   FEATURES.FOLDER_ARCHITECTURE,
-  FEATURES.REDUX_TOOLKIT,
+  FEATURES.STATE_MANAGEMENT,
   FEATURES.AXIOS_SETUP,
   FEATURES.JWT_AUTH,
   FEATURES.REACT_ROUTER
+];
+
+export const STATE_MANAGEMENT_CHOICES = [
+  {
+    name: FEATURES.REDUX_TOOLKIT,
+    value: FEATURES.REDUX_TOOLKIT
+  },
+  {
+    name: FEATURES.ZUSTAND,
+    value: FEATURES.ZUSTAND
+  }
 ];
 
 export const SOURCE_DIRECTORY = 'src';
@@ -346,6 +378,34 @@ Next steps:
    import { useAppDispatch, useAppSelector } from './store/hooks/reduxHooks';
 
 3. Use the example slice or create your own in src/store/slices/.`;
+
+export const ZUSTAND_PACKAGES = ['zustand@latest'];
+
+export const ZUSTAND_TEMPLATE_DIRECTORIES = {
+  [LANGUAGES.JAVASCRIPT]: 'zustand',
+  [LANGUAGES.TYPESCRIPT]: 'zustand-ts'
+};
+
+export const ZUSTAND_TEMPLATE_FILES = {
+  [LANGUAGES.JAVASCRIPT]: 'useExampleStore.js.template',
+  [LANGUAGES.TYPESCRIPT]: 'useExampleStore.ts.template'
+};
+
+export const ZUSTAND_OUTPUT_FILES = {
+  [LANGUAGES.JAVASCRIPT]: 'useExampleStore.js',
+  [LANGUAGES.TYPESCRIPT]: 'useExampleStore.ts'
+};
+
+export const ZUSTAND_NEXT_STEPS = `Zustand setup complete!
+
+Next steps:
+1. Import the store in any component:
+   import { useExampleStore } from './store/useExampleStore';
+
+2. Read and update state:
+   const { data, loading, fetchExampleData, clearExample } = useExampleStore();
+
+3. Create more stores in src/store/ as your app grows.`;
 
 export const JWT_TEMPLATE_DIRECTORY = 'jwt';
 

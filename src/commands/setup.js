@@ -15,6 +15,7 @@ import { generateFolderStructure } from '../generators/folderGenerator.js';
 import { generateJWTSetup } from '../generators/jwtGenerator.js';
 import { generateReduxSetup } from '../generators/reduxGenerator.js';
 import { generateRouterSetup } from '../generators/routerGenerator.js';
+import { generateZustandSetup } from '../generators/zustandGenerator.js';
 import { showInstallerSpinner } from '../utils/installer.js';
 import { logger } from '../utils/logger.js';
 
@@ -40,8 +41,14 @@ export async function runSetup(answers, projectType, language = LANGUAGES.JAVASC
       await generateFolderStructure(targetPath, options);
     }
 
-    if (selectedFeatures.includes(FEATURES.REDUX_TOOLKIT)) {
-      await generateReduxSetup(targetPath, language, options);
+    if (selectedFeatures.includes(FEATURES.STATE_MANAGEMENT) || selectedFeatures.includes(FEATURES.REDUX_TOOLKIT)) {
+      const stateManagement = answers[ANSWER_KEYS.STATE_MANAGEMENT] || FEATURES.REDUX_TOOLKIT;
+
+      if (stateManagement === FEATURES.ZUSTAND) {
+        await generateZustandSetup(targetPath, language, options);
+      } else {
+        await generateReduxSetup(targetPath, language, options);
+      }
     }
 
     if (selectedFeatures.includes(FEATURES.AXIOS_SETUP)) {
@@ -59,7 +66,9 @@ export async function runSetup(answers, projectType, language = LANGUAGES.JAVASC
     selectedFeatures
       .filter((feature) => ![
         FEATURES.FOLDER_ARCHITECTURE,
+        FEATURES.STATE_MANAGEMENT,
         FEATURES.REDUX_TOOLKIT,
+        FEATURES.ZUSTAND,
         FEATURES.AXIOS_SETUP,
         FEATURES.JWT_AUTH,
         FEATURES.REACT_ROUTER

@@ -9,8 +9,10 @@ import {
   FEATURE_PROMPT_CHOICES,
   FEATURES,
   LANGUAGE_LABELS,
+  LANGUAGE_PROMPT_CHOICES,
   PROJECT_TYPE_LABELS,
   PROMPTS,
+  STATE_MANAGEMENT_CHOICES,
   SETUP_FEATURES
 } from '../constants/index.js';
 import { runSetup } from './setup.js';
@@ -54,6 +56,8 @@ export async function init(options = {}) {
     const answers = options[CLI_OPTIONS.YES]
       ? {
         [ANSWER_KEYS.PROJECT_NAME]: defaultProjectName,
+        [ANSWER_KEYS.LANGUAGE]: language,
+        [ANSWER_KEYS.STATE_MANAGEMENT]: FEATURES.REDUX_TOOLKIT,
         [ANSWER_KEYS.FEATURES]: SETUP_FEATURES
       }
       : await inquirer.prompt([
@@ -62,6 +66,13 @@ export async function init(options = {}) {
           name: ANSWER_KEYS.PROJECT_NAME,
           message: PROMPTS.PROJECT_NAME,
           default: defaultProjectName
+        },
+        {
+          type: 'list',
+          name: ANSWER_KEYS.LANGUAGE,
+          message: PROMPTS.LANGUAGE,
+          choices: LANGUAGE_PROMPT_CHOICES,
+          default: language
         },
         {
           type: 'checkbox',
@@ -82,17 +93,26 @@ export async function init(options = {}) {
 
             return selectedFeatures;
           }
+        },
+        {
+          type: 'list',
+          name: ANSWER_KEYS.STATE_MANAGEMENT,
+          message: PROMPTS.STATE_MANAGEMENT,
+          choices: STATE_MANAGEMENT_CHOICES,
+          default: FEATURES.REDUX_TOOLKIT,
+          when: (currentAnswers) => currentAnswers[ANSWER_KEYS.FEATURES].includes(FEATURES.STATE_MANAGEMENT)
         }
       ]);
 
     const phaseAnswers = {
       projectType,
-      language,
+      language: answers[ANSWER_KEYS.LANGUAGE],
       projectName: answers[ANSWER_KEYS.PROJECT_NAME],
-      features: answers[ANSWER_KEYS.FEATURES]
+      features: answers[ANSWER_KEYS.FEATURES],
+      stateManagement: answers[ANSWER_KEYS.STATE_MANAGEMENT]
     };
 
-    await runSetup(phaseAnswers, projectType, language, options);
+    await runSetup(phaseAnswers, projectType, phaseAnswers.language, options);
     logger.success(CLI_MESSAGES.SETUP_COMPLETE);
     return phaseAnswers;
   } catch (error) {

@@ -2,7 +2,7 @@
 
 Inject scalable React architecture into an existing React project.
 
-`react-base-pack` is not a framework and not a full app boilerplate. It is an npm CLI that adds production-friendly folders, Redux Toolkit setup, Axios setup, JWT auth structure, and React Router structure to apps you already created with Vite, CRA, or Next.js.
+`react-base-pack` is not a framework and not a full app boilerplate. It is an npm CLI that adds production-friendly folders, state management setup, Axios setup, JWT auth structure, and React Router structure to apps you already created with Vite, CRA, or Next.js.
 
 ## Requirements
 
@@ -24,6 +24,10 @@ For local development from this repo:
 node ../react-base-pack/bin/index.js init
 ```
 
+The CLI asks for your project name, JavaScript or TypeScript output, and which features to set up. The language prompt is preselected from your project; TypeScript is selected when `tsconfig.json` or a TypeScript dependency is detected.
+
+When you select `State Management`, the CLI asks you to choose `Redux Toolkit` or `Zustand`.
+
 ## CLI Options
 
 ```bash
@@ -36,7 +40,7 @@ Preview files and packages without creating or installing anything.
 npx react-base-pack init --yes
 ```
 
-Use recommended defaults, select all features, and choose axios for JWT auth.
+Use recommended defaults, select all features, choose detected JS/TS output, and choose axios for JWT auth.
 
 ```bash
 npx react-base-pack init --yes --dry-run
@@ -47,12 +51,26 @@ Preview the complete all-features setup.
 ## Features
 
 - Folder Architecture
-- Redux Toolkit
+- State Management
+  - Redux Toolkit
+  - Zustand
 - Axios Setup
 - JWT Auth
 - React Router
 - JavaScript and TypeScript project detection
 - Vite, CRA, and Next.js project detection
+
+## Feature Installs
+
+When selected, these dependencies are installed automatically:
+
+- Redux Toolkit: `@reduxjs/toolkit` and `react-redux`
+- Zustand: `zustand`
+- Axios Setup: `axios`
+- JWT Auth with axios: `axios`
+- React Router: `react-router-dom@6`
+
+`--dry-run` shows these installs without running them.
 
 ## Generated Structure
 
@@ -79,6 +97,15 @@ src/store/
 |-- store.js
 |-- hooks/reduxHooks.js
 |-- slices/exampleSlice.js
+```
+
+TypeScript projects receive `.ts` files.
+
+Zustand adds:
+
+```text
+src/store/
+|-- useExampleStore.js
 ```
 
 TypeScript projects receive `.ts` files.
@@ -123,6 +150,14 @@ import { store } from './store/store';
 <Provider store={store}>
   <App />
 </Provider>
+```
+
+Zustand:
+
+```jsx
+import { useExampleStore } from './store/useExampleStore';
+
+const { data, loading, fetchExampleData } = useExampleStore();
 ```
 
 JWT Auth:

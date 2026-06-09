@@ -11,10 +11,12 @@ import {
   SOURCE_DIRECTORY
 } from '../constants/index.js';
 import { generateAxiosSetup } from '../generators/axiosGenerator.js';
+import { generateEnvSetup } from '../generators/envGenerator.js';
 import { generateFolderStructure } from '../generators/folderGenerator.js';
 import { generateJWTSetup } from '../generators/jwtGenerator.js';
 import { generateReduxSetup } from '../generators/reduxGenerator.js';
 import { generateRouterSetup } from '../generators/routerGenerator.js';
+import { generateTanStackQuerySetup } from '../generators/tanstackQueryGenerator.js';
 import { generateZustandSetup } from '../generators/zustandGenerator.js';
 import { showInstallerSpinner } from '../utils/installer.js';
 import { logger } from '../utils/logger.js';
@@ -51,6 +53,14 @@ export async function runSetup(answers, projectType, language = LANGUAGES.JAVASC
       }
     }
 
+    if (selectedFeatures.includes(FEATURES.ENV_CONFIG)) {
+      await generateEnvSetup(targetPath, language, options);
+    }
+
+    if (selectedFeatures.includes(FEATURES.TANSTACK_QUERY)) {
+      await generateTanStackQuerySetup(targetPath, language, options);
+    }
+
     if (selectedFeatures.includes(FEATURES.AXIOS_SETUP)) {
       await generateAxiosSetup(targetPath, projectType, language, options);
     }
@@ -69,6 +79,8 @@ export async function runSetup(answers, projectType, language = LANGUAGES.JAVASC
         FEATURES.STATE_MANAGEMENT,
         FEATURES.REDUX_TOOLKIT,
         FEATURES.ZUSTAND,
+        FEATURES.ENV_CONFIG,
+        FEATURES.TANSTACK_QUERY,
         FEATURES.AXIOS_SETUP,
         FEATURES.JWT_AUTH,
         FEATURES.REACT_ROUTER

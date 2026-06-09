@@ -76,6 +76,12 @@ export const CLI_MESSAGES = {
   SETTING_UP_ZUSTAND: 'Setting up Zustand...',
   ZUSTAND_SETUP_COMPLETE: 'Zustand setup complete!',
   ZUSTAND_STORE_EXISTS: 'Zustand store already exists, skipping:',
+  SETTING_UP_ENV_CONFIG: 'Setting up environment config...',
+  ENV_CONFIG_SETUP_COMPLETE: 'Environment config setup complete!',
+  ENV_CONFIG_FILE_EXISTS: 'Environment config file already exists, skipping:',
+  SETTING_UP_TANSTACK_QUERY: 'Setting up TanStack Query...',
+  TANSTACK_QUERY_SETUP_COMPLETE: 'TanStack Query setup complete!',
+  TANSTACK_QUERY_FILE_EXISTS: 'TanStack Query file already exists, skipping:',
   SETTING_UP_JWT: 'Setting up JWT Auth architecture...',
   JWT_SETUP_COMPLETE: 'JWT Auth architecture setup complete!',
   JWT_FILE_EXISTS: 'Auth file already exists, skipping:',
@@ -136,6 +142,8 @@ export const FEATURES = {
   STATE_MANAGEMENT: 'State Management',
   REDUX_TOOLKIT: 'Redux Toolkit',
   ZUSTAND: 'Zustand',
+  ENV_CONFIG: 'Environment Config',
+  TANSTACK_QUERY: 'TanStack Query',
   AXIOS_SETUP: 'Axios Setup',
   JWT_AUTH: 'JWT Auth',
   REACT_ROUTER: 'React Router'
@@ -158,6 +166,14 @@ export const FEATURE_PROMPT_CHOICES = [
     value: FEATURES.STATE_MANAGEMENT
   },
   {
+    name: FEATURES.ENV_CONFIG,
+    value: FEATURES.ENV_CONFIG
+  },
+  {
+    name: FEATURES.TANSTACK_QUERY,
+    value: FEATURES.TANSTACK_QUERY
+  },
+  {
     name: FEATURES.AXIOS_SETUP,
     value: FEATURES.AXIOS_SETUP
   },
@@ -174,6 +190,8 @@ export const FEATURE_PROMPT_CHOICES = [
 export const SETUP_FEATURES = [
   FEATURES.FOLDER_ARCHITECTURE,
   FEATURES.STATE_MANAGEMENT,
+  FEATURES.ENV_CONFIG,
+  FEATURES.TANSTACK_QUERY,
   FEATURES.AXIOS_SETUP,
   FEATURES.JWT_AUTH,
   FEATURES.REACT_ROUTER
@@ -406,6 +424,75 @@ Next steps:
    const { data, loading, fetchExampleData, clearExample } = useExampleStore();
 
 3. Create more stores in src/store/ as your app grows.`;
+
+export const ENV_EXAMPLE_FILE = '.env.example';
+
+export const ENV_TEMPLATE_DIRECTORIES = {
+  [LANGUAGES.JAVASCRIPT]: 'env',
+  [LANGUAGES.TYPESCRIPT]: 'env-ts'
+};
+
+export const ENV_TEMPLATE_FILES = {
+  EXAMPLE: 'env.example.template',
+  [LANGUAGES.JAVASCRIPT]: 'env.js.template',
+  [LANGUAGES.TYPESCRIPT]: 'env.ts.template'
+};
+
+export const ENV_OUTPUT_FILES = {
+  [LANGUAGES.JAVASCRIPT]: 'env.js',
+  [LANGUAGES.TYPESCRIPT]: 'env.ts'
+};
+
+export const ENV_NEXT_STEPS = `Environment config setup complete!
+
+Next steps:
+1. Copy .env.example to .env.
+2. Fill in your API URL and app environment.
+3. Import env from src/config/env.`;
+
+export const TANSTACK_QUERY_PACKAGES = ['@tanstack/react-query@latest'];
+
+export const TANSTACK_QUERY_TEMPLATE_DIRECTORIES = {
+  [LANGUAGES.JAVASCRIPT]: 'tanstack-query',
+  [LANGUAGES.TYPESCRIPT]: 'tanstack-query-ts'
+};
+
+export const TANSTACK_QUERY_DIRECTORIES = {
+  CONFIG: 'config',
+  PROVIDERS: 'providers',
+  HOOKS: 'hooks'
+};
+
+export const TANSTACK_QUERY_TEMPLATE_FILES = {
+  QUERY_CLIENT_JS: 'queryClient.js.template',
+  QUERY_CLIENT_TS: 'queryClient.ts.template',
+  QUERY_PROVIDER_JS: 'QueryProvider.jsx.template',
+  QUERY_PROVIDER_TS: 'QueryProvider.tsx.template',
+  EXAMPLE_QUERY_JS: 'useExampleQuery.js.template',
+  EXAMPLE_QUERY_TS: 'useExampleQuery.ts.template'
+};
+
+export const TANSTACK_QUERY_OUTPUT_FILES = {
+  QUERY_CLIENT_JS: 'queryClient.js',
+  QUERY_CLIENT_TS: 'queryClient.ts',
+  QUERY_PROVIDER_JS: 'QueryProvider.jsx',
+  QUERY_PROVIDER_TS: 'QueryProvider.tsx',
+  EXAMPLE_QUERY_JS: 'useExampleQuery.js',
+  EXAMPLE_QUERY_TS: 'useExampleQuery.ts'
+};
+
+export const TANSTACK_QUERY_NEXT_STEPS = `TanStack Query setup complete!
+
+Next steps:
+1. Wrap your app with QueryProvider:
+   import QueryProvider from './providers/QueryProvider';
+
+   <QueryProvider>
+     <App />
+   </QueryProvider>
+
+2. Use the example hook:
+   import { useExampleQuery } from './hooks/useExampleQuery';`;
 
 export const JWT_TEMPLATE_DIRECTORY = 'jwt';
 

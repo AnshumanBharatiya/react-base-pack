@@ -34,6 +34,7 @@
     "bin",
     "src",
     "README.md",
+    "TESTING.md",
     "LICENSE"
   ],
   "engines": {

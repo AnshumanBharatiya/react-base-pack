@@ -1,0 +1,15 @@
+// Example TanStack Query hook.
+
+import { useQuery } from '@tanstack/react-query';
+
+async function fetchExampleData() {
+  // Replace with a real API call.
+  return { data: 'example' };
+}
+
+export function useExampleQuery() {
+  return useQuery({
+    queryKey: ['example'],
+    queryFn: fetchExampleData
+  });
+}

@@ -2,7 +2,7 @@
 
 Inject scalable React architecture into an existing React project.
 
-`react-base-pack` is not a framework and not a full app boilerplate. It is an npm CLI that adds production-friendly folders, state management setup, Axios setup, JWT auth structure, and React Router structure to apps you already created with Vite, CRA, or Next.js.
+`react-base-pack` is not a framework and not a full app boilerplate. It is an npm CLI that adds production-friendly folders, state management setup, environment config, TanStack Query, Axios setup, JWT auth structure, and React Router structure to apps you already created with Vite, CRA, or Next.js.
 
 ## Requirements
 
@@ -54,6 +54,8 @@ Preview the complete all-features setup.
 - State Management
   - Redux Toolkit
   - Zustand
+- Environment Config
+- TanStack Query
 - Axios Setup
 - JWT Auth
 - React Router
@@ -66,6 +68,7 @@ When selected, these dependencies are installed automatically:
 
 - Redux Toolkit: `@reduxjs/toolkit` and `react-redux`
 - Zustand: `zustand`
+- TanStack Query: `@tanstack/react-query`
 - Axios Setup: `axios`
 - JWT Auth with axios: `axios`
 - React Router: `react-router-dom@6`
@@ -109,6 +112,25 @@ src/store/
 ```
 
 TypeScript projects receive `.ts` files.
+
+Environment Config adds:
+
+```text
+.env.example
+src/config/env.js
+```
+
+TypeScript projects receive `src/config/env.ts`.
+
+TanStack Query adds:
+
+```text
+src/config/queryClient.js
+src/providers/QueryProvider.jsx
+src/hooks/useExampleQuery.js
+```
+
+TypeScript projects receive `.ts` and `.tsx` files.
 
 JWT Auth adds:
 
@@ -158,6 +180,22 @@ Zustand:
 import { useExampleStore } from './store/useExampleStore';
 
 const { data, loading, fetchExampleData } = useExampleStore();
+```
+
+Environment Config:
+
+```js
+import env from './config/env';
+```
+
+TanStack Query:
+
+```jsx
+import QueryProvider from './providers/QueryProvider';
+
+<QueryProvider>
+  <App />
+</QueryProvider>
 ```
 
 JWT Auth:

@@ -62,6 +62,8 @@ test('runSetup dry-run does not create files or install dependencies', async () 
         [ANSWER_KEYS.FEATURES]: [
           FEATURES.FOLDER_ARCHITECTURE,
           FEATURES.STATE_MANAGEMENT,
+          FEATURES.ENV_CONFIG,
+          FEATURES.TANSTACK_QUERY,
           FEATURES.AXIOS_SETUP,
           FEATURES.JWT_AUTH,
           FEATURES.REACT_ROUTER
